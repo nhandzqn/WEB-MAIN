@@ -1790,7 +1790,7 @@ async function verifyOTP() {
   users.push(pendingRegData);
   await window.FB.set('vancanh/users', users);
   closeVerify();
-  showToast('🎉', 'Đăng ký thành công! Đang đăng nhập...');
+  showToast('🎉', 'Đăng ký thành công!');
   const regName = pendingRegData.name;
   pendingOTP = null;
   pendingRegData = null;
