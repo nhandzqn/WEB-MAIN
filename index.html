@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* Toàn bộ CSS giống như đã cung cấp ở trên */
+  /* (Đã bao gồm đầy đủ style từ phiên bản trước) */
+  
   :root {
     --bg: #0a0c10;
     --surface: #12151c;
@@ -1067,6 +1070,8 @@
     .auth-card { padding: 24px 18px; }
   }
 </style>
+<!-- Config riêng biệt -->
+<script src="config.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- Firebase Realtime Database -->
 <script type="module">
@@ -1074,15 +1079,7 @@
   import { getDatabase, ref, set, get, push, onValue, update, remove }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDjkE8PfMHQC3pzlL7XRxC9Ld67OENchiY",
-    authDomain: "database-34638.firebaseapp.com",
-    databaseURL: "https://database-34638-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "database-34638",
-    storageBucket: "database-34638.firebasestorage.app",
-    messagingSenderId: "685553821978",
-    appId: "1:685553821978:web:56b3572cb26e0f6afaa4a3"
-  };
+  const FIREBASE_CONFIG = window.APP_CONFIG.FIREBASE;
 
   let db = null;
   try {
@@ -1122,7 +1119,11 @@
 </head>
 <body>
 
-<!-- ─── AUTH SCREEN ─── -->
+<!-- Toàn bộ HTML của app giống như phiên bản trước -->
+<!-- (Đã bao gồm đầy đủ auth-screen, verify-modal, forgot-modal, main app, các page, modals) -->
+<!-- Do giới hạn độ dài, vui lòng tham khảo phần HTML từ câu trả lời trước -->
+<!-- Đây là phần tiếp theo của file index.html -->
+
 <div id="auth-screen">
   <div class="auth-bg"></div>
   <div class="auth-dots"></div>
@@ -1132,14 +1133,10 @@
       <div class="auth-logo-icon">🎓</div>
       <span class="auth-logo-text">THPT Vân Canh</span>
     </div>
-
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchTab('login')">Đăng nhập</button>
       <button class="auth-tab" onclick="switchTab('register')">Đăng ký</button>
     </div>
-
-    <!-- LOGIN FORM -->
-    <!-- FIX: Dùng role="form" + autocomplete để tránh cảnh báo "Password field not in form" -->
     <div class="auth-form" id="login-form" role="form" aria-label="Đăng nhập">
       <div class="field">
         <label for="login-email">Email</label>
@@ -1149,26 +1146,17 @@
       <div class="field">
         <label for="login-pass">Mật khẩu</label>
         <div style="position:relative">
-          <input type="password" placeholder="••••••••" id="login-pass"
-            autocomplete="current-password" name="password"
-            style="width:100%;padding-right:46px"
-            onkeydown="if(event.key==='Enter')doLogin()">
-          <button type="button" onclick="togglePass('login-pass','eye-login')"
-            style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:0;line-height:1;transition:color 0.2s"
-            id="eye-login" title="Hiện/Ẩn mật khẩu">👁</button>
+          <input type="password" placeholder="••••••••" id="login-pass" autocomplete="current-password" name="password" style="width:100%;padding-right:46px" onkeydown="if(event.key==='Enter')doLogin()">
+          <button type="button" onclick="togglePass('login-pass','eye-login')" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:0;line-height:1;transition:color 0.2s" id="eye-login" title="Hiện/Ẩn mật khẩu">👁</button>
         </div>
         <div class="field-error-msg" id="login-pass-err">Sai mật khẩu!</div>
       </div>
       <div style="text-align:right;margin-top:-4px">
-        <button type="button" onclick="openForgotModal()"
-          style="background:transparent;border:none;color:var(--accent-light);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);padding:0;text-decoration:underline;text-underline-offset:3px;opacity:0.85;transition:opacity 0.2s"
-          onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Quên mật khẩu?</button>
+        <button type="button" onclick="openForgotModal()" style="background:transparent;border:none;color:var(--accent-light);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);padding:0;text-decoration:underline;text-underline-offset:3px;opacity:0.85;transition:opacity 0.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Quên mật khẩu?</button>
       </div>
       <div class="field-error-msg" id="login-general-err" style="font-size:13px;padding:4px 0;">Tài khoản không tồn tại!</div>
       <button class="btn-submit" onclick="doLogin()">Đăng nhập →</button>
     </div>
-
-    <!-- REGISTER FORM -->
     <div class="auth-form" id="register-form" style="display:none" role="form" aria-label="Đăng ký">
       <div class="field">
         <label for="reg-name">Họ và tên</label>
@@ -1183,12 +1171,8 @@
       <div class="field">
         <label for="reg-pass">Mật khẩu</label>
         <div style="position:relative">
-          <input type="password" placeholder="Tối thiểu 8 ký tự" id="reg-pass"
-            autocomplete="new-password" name="new-password"
-            style="width:100%;padding-right:46px">
-          <button type="button" onclick="togglePass('reg-pass','eye-reg')"
-            style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:0;line-height:1;transition:color 0.2s"
-            id="eye-reg" title="Hiện/Ẩn mật khẩu">👁</button>
+          <input type="password" placeholder="Tối thiểu 8 ký tự" id="reg-pass" autocomplete="new-password" name="new-password" style="width:100%;padding-right:46px">
+          <button type="button" onclick="togglePass('reg-pass','eye-reg')" style="position:absolute;right:13px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;color:var(--muted);font-size:18px;padding:0;line-height:1;transition:color 0.2s" id="eye-reg" title="Hiện/Ẩn mật khẩu">👁</button>
         </div>
         <div class="field-error-msg" id="reg-pass-err">Mật khẩu tối thiểu 8 ký tự!</div>
       </div>
@@ -1209,26 +1193,20 @@
   </div>
 </div>
 
-<!-- ─── FORGOT PASSWORD MODAL ─── -->
+<!-- Forgot Modal -->
 <div class="verify-overlay" id="forgot-modal">
   <div class="verify-box" style="max-width:420px">
     <div class="verify-icon" id="forgot-icon">🔑</div>
     <h3 id="forgot-title">Quên mật khẩu</h3>
     <p id="forgot-desc">Nhập Email đã đăng ký để nhận lại mật khẩu qua Gmail.</p>
-
     <div id="forgot-step1">
       <div class="field" style="text-align:left;margin-bottom:14px">
         <label>Email đã đăng ký</label>
-        <input type="email" placeholder="ten@email.com" id="forgot-email-input"
-          autocomplete="email"
-          style="width:100%;padding:13px 16px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border-color 0.2s"
-          onkeydown="if(event.key==='Enter')doForgotPass()"
-          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+        <input type="email" placeholder="ten@email.com" id="forgot-email-input" autocomplete="email" style="width:100%;padding:13px 16px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border-color 0.2s" onkeydown="if(event.key==='Enter')doForgotPass()" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
         <div id="forgot-err" style="display:none;font-size:12px;color:var(--accent2);margin-top:6px;font-weight:500">❌ Email này chưa được đăng ký!</div>
       </div>
       <button class="btn-submit" style="width:100%" onclick="doForgotPass()">Gửi mật khẩu qua email →</button>
     </div>
-
     <div id="forgot-step2" style="display:none">
       <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);border-radius:14px;padding:18px 16px;margin-bottom:18px">
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Tài khoản</div>
@@ -1238,14 +1216,13 @@
       </div>
       <button class="btn-submit" style="width:100%;background:linear-gradient(135deg,#34d399,#059669);box-shadow:0 6px 20px rgba(52,211,153,0.3)" onclick="closeForgotModal()">Đã hiểu, đăng nhập ✓</button>
     </div>
-
     <div style="margin-top:12px">
       <button class="btn-cancel" style="width:100%" onclick="closeForgotModal()">Đóng</button>
     </div>
   </div>
 </div>
 
-<!-- ─── VERIFY MODAL ─── -->
+<!-- Verify Modal -->
 <div class="verify-overlay" id="verify-modal">
   <div class="verify-box">
     <div class="verify-icon">📧</div>
@@ -1268,10 +1245,9 @@
   </div>
 </div>
 
-<!-- ─── MAIN APP ─── -->
+<!-- Main App -->
 <div id="app">
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">🎓</div>
@@ -1280,38 +1256,20 @@
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Chính</div>
-      <button class="nav-item active" onclick="showPage('feed')">
-        <span class="nav-icon">🏠</span> Trang chủ
-      </button>
-      <button class="nav-item" onclick="showPage('chat')">
-        <span class="nav-icon">💬</span> Tin nhắn
-        <span class="nav-badge">3</span>
-      </button>
-      <button class="nav-item" onclick="showPage('groups')">
-        <span class="nav-icon">🏛️</span> Câu lạc bộ
-      </button>
-      <button class="nav-item" onclick="showPage('friends')">
-        <span class="nav-icon">👥</span> Kết bạn
-      </button>
-      <button class="nav-item" onclick="showPage('about')">
-        <span class="nav-icon">ℹ️</span> Giới thiệu
-      </button>
-
+      <button class="nav-item active" onclick="showPage('feed')"><span class="nav-icon">🏠</span> Trang chủ</button>
+      <button class="nav-item" onclick="showPage('chat')"><span class="nav-icon">💬</span> Tin nhắn<span class="nav-badge">3</span></button>
+      <button class="nav-item" onclick="showPage('groups')"><span class="nav-icon">🏛️</span> Câu lạc bộ</button>
+      <button class="nav-item" onclick="showPage('friends')"><span class="nav-icon">👥</span> Kết bạn</button>
+      <button class="nav-item" onclick="showPage('about')"><span class="nav-icon">ℹ️</span> Giới thiệu</button>
       <div class="nav-section-label" style="margin-top:8px">Câu lạc bộ của tôi</div>
-      <div class="sidebar-my-clubs" id="sidebar-my-clubs">
-        <div style="padding:8px 14px;font-size:12px;color:var(--muted)">Chưa tham gia CLB nào</div>
-      </div>
+      <div class="sidebar-my-clubs" id="sidebar-my-clubs"><div style="padding:8px 14px;font-size:12px;color:var(--muted)">Chưa tham gia CLB nào</div></div>
     </nav>
     <div class="sidebar-user">
       <div class="avatar" id="sidebar-avatar">A</div>
-      <div class="user-info">
-        <div class="user-name" id="sidebar-name">Người dùng</div>
-        <div class="user-status">Đang hoạt động</div>
-      </div>
+      <div class="user-info"><div class="user-name" id="sidebar-name">Người dùng</div><div class="user-status">Đang hoạt động</div></div>
       <button class="btn-icon" onclick="doLogout()" title="Đăng xuất">⏻</button>
     </div>
   </aside>
-
   <main class="main">
     <div class="mobile-topbar">
       <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
@@ -1319,14 +1277,11 @@
       <button class="btn-icon" onclick="doLogout()" title="Đăng xuất">⏻</button>
     </div>
 
-    <!-- ─── FEED PAGE ─── -->
+    <!-- Feed Page -->
     <div id="feed-page" class="page active">
       <div class="feed-center">
         <div class="compose-box">
-          <div class="compose-row">
-            <div class="avatar" id="feed-avatar">A</div>
-            <textarea class="compose-input" id="post-input" placeholder="Chia sẻ điều gì đó với câu lạc bộ..."></textarea>
-          </div>
+          <div class="compose-row"><div class="avatar" id="feed-avatar">A</div><textarea class="compose-input" id="post-input" placeholder="Chia sẻ điều gì đó với câu lạc bộ..."></textarea></div>
           <div id="attach-preview" style="display:none;margin-top:10px;padding:8px;background:var(--surface2);border-radius:8px;font-size:13px;color:var(--muted);flex-wrap:wrap"></div>
           <div class="compose-actions">
             <input type="file" id="post-image-input" accept="image/*" style="display:none" onchange="handleImageAttach(this)">
@@ -1338,300 +1293,63 @@
         </div>
         <div id="posts-container"></div>
       </div>
-
       <aside class="feed-right">
-        <div class="panel-card">
-          <div class="panel-title">🟢 Đang online</div>
-          <div class="member-row">
-            <div class="avatar sm" style="background:linear-gradient(135deg,#FF6584,#FF8E53)">T</div>
-            <div class="member-info">
-              <div class="member-name">Trần Thị Bình</div>
-              <div class="member-role">CLB Lập trình</div>
-            </div>
-            <div class="online-dot"></div>
-          </div>
-          <div class="member-row">
-            <div class="avatar sm" style="background:linear-gradient(135deg,#43E97B,#38F9D7)">M</div>
-            <div class="member-info">
-              <div class="member-name">Minh Khoa</div>
-              <div class="member-role">CLB Âm nhạc</div>
-            </div>
-            <div class="online-dot"></div>
-          </div>
-          <div class="member-row">
-            <div class="avatar sm" style="background:linear-gradient(135deg,#F7971E,#FFD200)">H</div>
-            <div class="member-info">
-              <div class="member-name">Hà Phương</div>
-              <div class="member-role">CLB Nhiếp ảnh</div>
-            </div>
-            <div class="online-dot"></div>
-          </div>
+        <div class="panel-card"><div class="panel-title">🟢 Đang online</div>
+          <div class="member-row"><div class="avatar sm" style="background:linear-gradient(135deg,#FF6584,#FF8E53)">T</div><div class="member-info"><div class="member-name">Trần Thị Bình</div><div class="member-role">CLB Lập trình</div></div><div class="online-dot"></div></div>
+          <div class="member-row"><div class="avatar sm" style="background:linear-gradient(135deg,#43E97B,#38F9D7)">M</div><div class="member-info"><div class="member-name">Minh Khoa</div><div class="member-role">CLB Âm nhạc</div></div><div class="online-dot"></div></div>
+          <div class="member-row"><div class="avatar sm" style="background:linear-gradient(135deg,#F7971E,#FFD200)">H</div><div class="member-info"><div class="member-name">Hà Phương</div><div class="member-role">CLB Nhiếp ảnh</div></div><div class="online-dot"></div></div>
         </div>
-
-        <div class="panel-card">
-          <div class="panel-title">🏛️ Gợi ý CLB</div>
-          <div class="club-chip">
-            <div class="club-chip-icon" style="background:rgba(91,108,255,0.12)">🤖</div>
-            <div class="club-chip-info">
-              <div class="club-chip-name">CLB AI & Data</div>
-              <div class="club-chip-count">128 thành viên</div>
-            </div>
-            <button class="btn-join">Tham gia</button>
-          </div>
-          <div class="club-chip">
-            <div class="club-chip-icon" style="background:rgba(255,92,138,0.1)">🎭</div>
-            <div class="club-chip-info">
-              <div class="club-chip-name">CLB Kịch nghệ</div>
-              <div class="club-chip-count">54 thành viên</div>
-            </div>
-            <button class="btn-join">Tham gia</button>
-          </div>
-          <div class="club-chip">
-            <div class="club-chip-icon" style="background:rgba(52,211,153,0.08)">⚽</div>
-            <div class="club-chip-info">
-              <div class="club-chip-name">CLB Thể thao</div>
-              <div class="club-chip-count">210 thành viên</div>
-            </div>
-            <button class="btn-join">Tham gia</button>
-          </div>
+        <div class="panel-card"><div class="panel-title">🏛️ Gợi ý CLB</div>
+          <div class="club-chip"><div class="club-chip-icon" style="background:rgba(91,108,255,0.12)">🤖</div><div class="club-chip-info"><div class="club-chip-name">CLB AI & Data</div><div class="club-chip-count">128 thành viên</div></div><button class="btn-join">Tham gia</button></div>
+          <div class="club-chip"><div class="club-chip-icon" style="background:rgba(255,92,138,0.1)">🎭</div><div class="club-chip-info"><div class="club-chip-name">CLB Kịch nghệ</div><div class="club-chip-count">54 thành viên</div></div><button class="btn-join">Tham gia</button></div>
+          <div class="club-chip"><div class="club-chip-icon" style="background:rgba(52,211,153,0.08)">⚽</div><div class="club-chip-info"><div class="club-chip-name">CLB Thể thao</div><div class="club-chip-count">210 thành viên</div></div><button class="btn-join">Tham gia</button></div>
         </div>
       </aside>
     </div>
 
-    <!-- ─── CHAT PAGE ─── -->
+    <!-- Chat Page -->
     <div id="chat-page" class="page">
       <div class="chat-list">
-        <div class="chat-list-header">
-          <h2>Tin nhắn</h2>
-          <div class="search-box">
-            <span style="color:var(--muted);font-size:14px">🔍</span>
-            <input placeholder="Tìm kiếm..." autocomplete="off">
-          </div>
-        </div>
+        <div class="chat-list-header"><h2>Tin nhắn</h2><div class="search-box"><span style="color:var(--muted);font-size:14px">🔍</span><input placeholder="Tìm kiếm..." autocomplete="off"></div></div>
         <div class="chat-items" id="chat-items"></div>
       </div>
       <div class="chat-window">
-        <div class="chat-header">
-          <div class="avatar lg" id="chat-partner-avatar" style="background:linear-gradient(135deg,#FF6584,#FF8E53)">T</div>
-          <div class="chat-header-info">
-            <div class="chat-header-name" id="chat-partner-name">Trần Thị Bình</div>
-            <div class="chat-header-status">● Đang hoạt động</div>
-          </div>
-          <button class="btn-icon" onclick="callPartner()" title="Gọi điện">📞</button>
-          <button class="btn-icon" onclick="videoCall()" title="Gọi video">🎥</button>
-          <button class="btn-icon" title="Thông tin">ℹ️</button>
-        </div>
+        <div class="chat-header"><div class="avatar lg" id="chat-partner-avatar" style="background:linear-gradient(135deg,#FF6584,#FF8E53)">T</div><div class="chat-header-info"><div class="chat-header-name" id="chat-partner-name">Trần Thị Bình</div><div class="chat-header-status">● Đang hoạt động</div></div><button class="btn-icon" onclick="callPartner()" title="Gọi điện">📞</button><button class="btn-icon" onclick="videoCall()" title="Gọi video">🎥</button><button class="btn-icon" title="Thông tin">ℹ️</button></div>
         <div class="messages" id="messages"></div>
-        <div class="chat-input-area">
-          <button class="btn-icon">😊</button>
-          <button class="btn-icon">📷</button>
-          <input class="chat-input" id="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off" onkeydown="if(event.key==='Enter')sendMsg()">
-          <button class="btn-send" onclick="sendMsg()">➤</button>
-        </div>
+        <div class="chat-input-area"><button class="btn-icon">😊</button><button class="btn-icon">📷</button><input class="chat-input" id="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off" onkeydown="if(event.key==='Enter')sendMsg()"><button class="btn-send" onclick="sendMsg()">➤</button></div>
       </div>
     </div>
 
-    <!-- ─── GROUPS PAGE ─── -->
-    <div id="groups-page" class="page">
-      <div class="page-header">
-        <div>
-          <h1>Câu lạc bộ</h1>
-          <p style="font-size:14px;color:var(--muted);margin-top:4px">Khám phá và tham gia các câu lạc bộ</p>
-        </div>
-        <button class="btn-create" onclick="openCreateModal()">
-          ＋ Tạo câu lạc bộ
-        </button>
-      </div>
-      <div class="groups-grid" id="groups-grid"></div>
-    </div>
+    <!-- Groups Page -->
+    <div id="groups-page" class="page"><div class="page-header"><div><h1>Câu lạc bộ</h1><p style="font-size:14px;color:var(--muted);margin-top:4px">Khám phá và tham gia các câu lạc bộ</p></div><button class="btn-create" onclick="openCreateModal()">＋ Tạo câu lạc bộ</button></div><div class="groups-grid" id="groups-grid"></div></div>
 
-    <!-- ─── FRIENDS PAGE ─── -->
-    <div id="friends-page" class="page">
-      <div class="friends-container">
-        <div>
-          <h1 style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:6px">👥 Kết bạn</h1>
-          <p style="font-size:14px;color:var(--muted)">Tìm kiếm và kết nối với bạn bè trường THPT Vân Canh</p>
-        </div>
-        <input class="friends-search-bar" id="friend-search" placeholder="🔍 Tìm kiếm bạn bè, câu lạc bộ..." oninput="renderFriends()" autocomplete="off">
-        <div id="friends-list">
-          <div style="text-align:center;color:var(--muted);padding:40px">Đang tải...</div>
-        </div>
-      </div>
-    </div>
+    <!-- Friends Page -->
+    <div id="friends-page" class="page"><div class="friends-container"><div><h1 style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:6px">👥 Kết bạn</h1><p style="font-size:14px;color:var(--muted)">Tìm kiếm và kết nối với bạn bè trường THPT Vân Canh</p></div><input class="friends-search-bar" id="friend-search" placeholder="🔍 Tìm kiếm bạn bè, câu lạc bộ..." oninput="renderFriends()" autocomplete="off"><div id="friends-list"><div style="text-align:center;color:var(--muted);padding:40px">Đang tải...</div></div></div></div>
 
-    <!-- ─── ABOUT PAGE ─── -->
-    <div id="about-page" class="page">
-      <div class="about-content">
+    <!-- About Page -->
+    <div id="about-page" class="page"><div class="about-content"><div class="about-hero"><div class="about-hero-icon">🎓</div><h1>THPT Vân Canh</h1><p>Nền tảng kết nối học sinh — nơi các câu lạc bộ trường THPT Vân Canh hoạt động, chia sẻ và cùng nhau phát triển. Tham gia để kết bạn, học hỏi và tạo ra những kỷ niệm đáng nhớ!</p></div><div class="about-section"><h2>✨ Tính năng nổi bật</h2><div class="about-features"><div class="feature-item"><div class="feature-icon">📰</div><div class="feature-title">Bảng tin</div><div class="feature-desc">Chia sẻ bài viết, hình ảnh và sự kiện của câu lạc bộ</div></div><div class="feature-item"><div class="feature-icon">💬</div><div class="feature-title">Nhắn tin</div><div class="feature-desc">Chat riêng tư và nhóm với các thành viên CLB</div></div><div class="feature-item"><div class="feature-icon">🏛️</div><div class="feature-title">Câu lạc bộ</div><div class="feature-desc">Khám phá và tham gia các CLB phù hợp với sở thích</div></div><div class="feature-item"><div class="feature-icon">🔔</div><div class="feature-title">Thông báo</div><div class="feature-desc">Nhận thông báo về sự kiện và hoạt động mới nhất</div></div><div class="feature-item"><div class="feature-icon">🔐</div><div class="feature-title">Bảo mật</div><div class="feature-desc">Xác minh tài khoản qua Gmail với mã OTP an toàn</div></div><div class="feature-item"><div class="feature-icon">📱</div><div class="feature-title">Mobile</div><div class="feature-desc">Giao diện tối ưu cho cả điện thoại và máy tính</div></div></div></div><div class="about-section"><h2>📞 Thông tin liên hệ</h2><div class="contact-grid"><div class="contact-item"><div class="contact-icon-wrap" style="background:rgba(52,211,153,0.1)">📱</div><div><div class="contact-label">Điện thoại</div><div class="contact-value">0386 778 856</div></div></div><div class="contact-item"><div class="contact-icon-wrap" style="background:rgba(91,108,255,0.1)">✉️</div><div><div class="contact-label">Gmail</div><div class="contact-value">thptvancanh@example.com</div></div></div><div class="contact-item"><div class="contact-icon-wrap" style="background:rgba(255,92,138,0.1)">🏫</div><div><div class="contact-label">Trường</div><div class="contact-value">THPT Vân Canh</div></div></div></div></div><div class="about-section" style="text-align:center;padding:28px"><p style="color:var(--muted);font-size:13px">© 2025 THPT Vân Canh — Nền tảng câu lạc bộ học sinh</p><p style="color:var(--muted);font-size:12px;margin-top:6px">Được xây dựng với ❤️ bởi đội ngũ CLB Lập trình</p></div></div></div>
 
-        <div class="about-hero">
-          <div class="about-hero-icon">🎓</div>
-          <h1>THPT Vân Canh</h1>
-          <p>Nền tảng kết nối học sinh — nơi các câu lạc bộ trường THPT Vân Canh hoạt động, chia sẻ và cùng nhau phát triển. Tham gia để kết bạn, học hỏi và tạo ra những kỷ niệm đáng nhớ!</p>
-        </div>
-
-        <div class="about-section">
-          <h2>✨ Tính năng nổi bật</h2>
-          <div class="about-features">
-            <div class="feature-item">
-              <div class="feature-icon">📰</div>
-              <div class="feature-title">Bảng tin</div>
-              <div class="feature-desc">Chia sẻ bài viết, hình ảnh và sự kiện của câu lạc bộ</div>
-            </div>
-            <div class="feature-item">
-              <div class="feature-icon">💬</div>
-              <div class="feature-title">Nhắn tin</div>
-              <div class="feature-desc">Chat riêng tư và nhóm với các thành viên CLB</div>
-            </div>
-            <div class="feature-item">
-              <div class="feature-icon">🏛️</div>
-              <div class="feature-title">Câu lạc bộ</div>
-              <div class="feature-desc">Khám phá và tham gia các CLB phù hợp với sở thích</div>
-            </div>
-            <div class="feature-item">
-              <div class="feature-icon">🔔</div>
-              <div class="feature-title">Thông báo</div>
-              <div class="feature-desc">Nhận thông báo về sự kiện và hoạt động mới nhất</div>
-            </div>
-            <div class="feature-item">
-              <div class="feature-icon">🔐</div>
-              <div class="feature-title">Bảo mật</div>
-              <div class="feature-desc">Xác minh tài khoản qua Gmail với mã OTP an toàn</div>
-            </div>
-            <div class="feature-item">
-              <div class="feature-icon">📱</div>
-              <div class="feature-title">Mobile</div>
-              <div class="feature-desc">Giao diện tối ưu cho cả điện thoại và máy tính</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="about-section">
-          <h2>📞 Thông tin liên hệ</h2>
-          <div class="contact-grid">
-            <div class="contact-item">
-              <div class="contact-icon-wrap" style="background:rgba(52,211,153,0.1)">📱</div>
-              <div>
-                <div class="contact-label">Điện thoại</div>
-                <div class="contact-value">0386 778 856</div>
-              </div>
-            </div>
-            <div class="contact-item">
-              <div class="contact-icon-wrap" style="background:rgba(91,108,255,0.1)">✉️</div>
-              <div>
-                <div class="contact-label">Gmail</div>
-                <div class="contact-value">thptvancanh@example.com</div>
-              </div>
-            </div>
-            <div class="contact-item">
-              <div class="contact-icon-wrap" style="background:rgba(255,92,138,0.1)">🏫</div>
-              <div>
-                <div class="contact-label">Trường</div>
-                <div class="contact-value">THPT Vân Canh</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="about-section" style="text-align:center;padding:28px">
-          <p style="color:var(--muted);font-size:13px">© 2025 THPT Vân Canh — Nền tảng câu lạc bộ học sinh</p>
-          <p style="color:var(--muted);font-size:12px;margin-top:6px">Được xây dựng với ❤️ bởi đội ngũ CLB Lập trình</p>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ─── CLUB DETAIL PAGE ─── -->
-    <div id="club-detail-page" class="page">
-      <div class="club-detail-content">
-        <button class="club-back-btn" onclick="showPage('groups')">← Quay lại Câu lạc bộ</button>
-        <div class="club-detail-hero" id="club-detail-hero">
-          <div class="club-detail-hero-emoji" id="club-detail-emoji">💻</div>
-          <div class="club-detail-hero-info">
-            <div class="club-detail-hero-title" id="club-detail-title">CLB Lập trình</div>
-            <div class="club-detail-hero-desc" id="club-detail-desc">Mô tả câu lạc bộ</div>
-            <div class="club-detail-hero-meta">
-              <span class="club-detail-meta-badge" id="club-detail-members">👥 0 thành viên</span>
-              <span class="club-detail-meta-badge" id="club-detail-status">✓ Đã tham gia</span>
-            </div>
-          </div>
-        </div>
-        <div class="club-detail-tabs">
-          <button class="club-detail-tab active" onclick="switchClubTab('posts',this)">📰 Bài viết</button>
-          <button class="club-detail-tab" onclick="switchClubTab('members',this)">👥 Thành viên</button>
-          <button class="club-detail-tab" onclick="switchClubTab('events',this)">📅 Sự kiện</button>
-        </div>
-        <div class="club-detail-panel active" id="club-panel-posts"></div>
-        <div class="club-detail-panel" id="club-panel-members"></div>
-        <div class="club-detail-panel" id="club-panel-events"></div>
-      </div>
-    </div>
-
+    <!-- Club Detail Page -->
+    <div id="club-detail-page" class="page"><div class="club-detail-content"><button class="club-back-btn" onclick="showPage('groups')">← Quay lại Câu lạc bộ</button><div class="club-detail-hero" id="club-detail-hero"><div class="club-detail-hero-emoji" id="club-detail-emoji">💻</div><div class="club-detail-hero-info"><div class="club-detail-hero-title" id="club-detail-title">CLB Lập trình</div><div class="club-detail-hero-desc" id="club-detail-desc">Mô tả câu lạc bộ</div><div class="club-detail-hero-meta"><span class="club-detail-meta-badge" id="club-detail-members">👥 0 thành viên</span><span class="club-detail-meta-badge" id="club-detail-status">✓ Đã tham gia</span></div></div></div><div class="club-detail-tabs"><button class="club-detail-tab active" onclick="switchClubTab('posts',this)">📰 Bài viết</button><button class="club-detail-tab" onclick="switchClubTab('members',this)">👥 Thành viên</button><button class="club-detail-tab" onclick="switchClubTab('events',this)">📅 Sự kiện</button></div><div class="club-detail-panel active" id="club-panel-posts"></div><div class="club-detail-panel" id="club-panel-members"></div><div class="club-detail-panel" id="club-panel-events"></div></div></div>
   </main>
 </div>
 
-<!-- CREATE GROUP MODAL -->
-<div class="modal-overlay" id="create-modal">
-  <div class="modal">
-    <h2>✨ Tạo câu lạc bộ mới</h2>
-    <div class="field">
-      <label>Tên câu lạc bộ</label>
-      <input class="select-field" type="text" placeholder="VD: CLB Robotics" id="new-club-name" style="border-radius:10px" autocomplete="off">
-    </div>
-    <div class="field">
-      <label>Mô tả</label>
-      <textarea class="select-field" placeholder="Mô tả về câu lạc bộ của bạn..." id="new-club-desc" style="border-radius:10px;min-height:80px;resize:none"></textarea>
-    </div>
-    <div class="field">
-      <label>Danh mục</label>
-      <select class="select-field" id="new-club-cat">
-        <option>Công nghệ</option>
-        <option>Âm nhạc & Nghệ thuật</option>
-        <option>Thể thao</option>
-        <option>Học thuật</option>
-        <option>Văn hóa</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Biểu tượng</label>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px" id="emoji-picker">
-        🚀 🎯 💡 🎵 ⚽ 📚 🎨 🤖 🌍 📷 🎭 🏆
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeCreateModal()">Hủy</button>
-      <button class="btn-submit" style="padding:11px 24px;border-radius:9px" onclick="createGroup()">Tạo ngay →</button>
-    </div>
-  </div>
-</div>
+<!-- Create Group Modal -->
+<div class="modal-overlay" id="create-modal"><div class="modal"><h2>✨ Tạo câu lạc bộ mới</h2><div class="field"><label>Tên câu lạc bộ</label><input class="select-field" type="text" placeholder="VD: CLB Robotics" id="new-club-name" style="border-radius:10px" autocomplete="off"></div><div class="field"><label>Mô tả</label><textarea class="select-field" placeholder="Mô tả về câu lạc bộ của bạn..." id="new-club-desc" style="border-radius:10px;min-height:80px;resize:none"></textarea></div><div class="field"><label>Danh mục</label><select class="select-field" id="new-club-cat"><option>Công nghệ</option><option>Âm nhạc & Nghệ thuật</option><option>Thể thao</option><option>Học thuật</option><option>Văn hóa</option></select></div><div class="field"><label>Biểu tượng</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px" id="emoji-picker">🚀 🎯 💡 🎵 ⚽ 📚 🎨 🤖 🌍 📷 🎭 🏆</div></div><div class="modal-actions"><button class="btn-cancel" onclick="closeCreateModal()">Hủy</button><button class="btn-submit" style="padding:11px 24px;border-radius:9px" onclick="createGroup()">Tạo ngay →</button></div></div></div>
 
-<!-- COMMENT MODAL -->
-<div class="modal-overlay" id="comment-modal">
-  <div class="modal" style="max-width:520px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <h2 style="margin:0">💬 Bình luận</h2>
-      <button class="btn-icon" onclick="closeCommentModal()" style="font-size:18px">✕</button>
-    </div>
-    <div class="comment-modal-body" id="comments-list"></div>
-    <div class="comment-input-row">
-      <textarea class="comment-text-input" id="comment-input" placeholder="Viết bình luận..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitComment();}"></textarea>
-      <button class="btn-send" onclick="submitComment()" style="height:44px;width:44px;border-radius:10px;font-size:18px">➤</button>
-    </div>
-  </div>
-</div>
+<!-- Comment Modal -->
+<div class="modal-overlay" id="comment-modal"><div class="modal" style="max-width:520px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><h2 style="margin:0">💬 Bình luận</h2><button class="btn-icon" onclick="closeCommentModal()" style="font-size:18px">✕</button></div><div class="comment-modal-body" id="comments-list"></div><div class="comment-input-row"><textarea class="comment-text-input" id="comment-input" placeholder="Viết bình luận..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitComment();}"></textarea><button class="btn-send" onclick="submitComment()" style="height:44px;width:44px;border-radius:10px;font-size:18px">➤</button></div></div></div>
 
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <span id="toast-icon">✅</span>
-  <span id="toast-msg">Thành công!</span>
-</div>
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Thành công!</span></div>
 
 <script>
 // ═══════════════════════════════════════════════════════
-// ⚙️  CẤU HÌNH EMAILJS
-const EMAILJS_PUBLIC_KEY   = "YeTkybzGu48tSZQZ9";
-const EMAILJS_SERVICE_ID   = "service_29glogz";
-const EMAILJS_TEMPLATE_OTP   = "template_yoy5vn6";  // Biến: {{passcode}}, {{time}}, {{user_name}}, {{email}}
-const EMAILJS_TEMPLATE_RESET = "template_c4pz2we";  // Biến: {{email1}}, {{user_name}}, {{password}}
+// SỬ DỤNG CẤU HÌNH TỪ config.js
+const EMAILJS_PUBLIC_KEY   = window.APP_CONFIG.EMAILJS.PUBLIC_KEY;
+const EMAILJS_SERVICE_ID   = window.APP_CONFIG.EMAILJS.SERVICE_ID;
+const EMAILJS_TEMPLATE_OTP   = window.APP_CONFIG.EMAILJS.TEMPLATE_OTP;
+const EMAILJS_TEMPLATE_RESET = window.APP_CONFIG.EMAILJS.TEMPLATE_RESET;
 // ═══════════════════════════════════════════════════════
 
 if (typeof emailjs !== 'undefined') {
@@ -1693,7 +1411,6 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// ─── FIX: Gửi OTP với đúng tên biến khớp template EmailJS ({{passcode}}, {{time}}) ───
 async function sendOTPEmail(toEmail, otp, userName) {
   try {
     const now = new Date();
@@ -1701,11 +1418,11 @@ async function sendOTPEmail(toEmail, otp, userName) {
     const timeStr = expireTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
 
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_OTP, {
-      email: toEmail,       // địa chỉ nhận
-      to_email: toEmail,    // dự phòng
-      passcode: otp,        // ← FIX: khớp với {{passcode}} trong template
-      otp_code: otp,        // dự phòng nếu template dùng {{otp_code}}
-      time: timeStr,        // ← FIX: khớp với {{time}} trong template
+      email: toEmail,
+      to_email: toEmail,
+      passcode: otp,
+      otp_code: otp,
+      time: timeStr,
       user_name: userName
     });
     return true;
@@ -1715,7 +1432,6 @@ async function sendOTPEmail(toEmail, otp, userName) {
   }
 }
 
-// ─── Gửi mật khẩu reset ───
 async function sendResetEmail(toEmail, userName, password) {
   try {
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_RESET, {
@@ -1731,15 +1447,12 @@ async function sendResetEmail(toEmail, userName, password) {
   }
 }
 
-// ─── OTP INPUT ───
 function otpInput(el, idx) {
-  // Chỉ cho phép số
   el.value = el.value.replace(/\D/g,'');
   if(el.value.length === 1) {
     const inputs = document.querySelectorAll('#otp-inputs input');
     if(idx < inputs.length - 1) inputs[idx+1].focus();
   }
-  // Auto submit nếu điền đủ 6 số
   const inputs = document.querySelectorAll('#otp-inputs input');
   const allFilled = Array.from(inputs).every(i => i.value.length === 1);
   if (allFilled) {
@@ -1780,7 +1493,6 @@ async function verifyOTP() {
     return;
   }
 
-  // Kiểm tra lần cuối trước khi lưu
   let users = await window.FB.get('vancanh/users') || [];
   if(users.find(u => u.email.toLowerCase() === pendingRegData.email.toLowerCase())) {
     showErr('otp-err', true);
@@ -1810,7 +1522,6 @@ async function resendOTP() {
   }
 }
 
-// ─── AUTH TABS ───
 function switchTab(tab) {
   document.querySelectorAll('.auth-tab').forEach((t,i) =>
     t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register'))
@@ -1820,7 +1531,6 @@ function switchTab(tab) {
   clearErrors('login-email-err','login-pass-err','login-general-err','reg-name-err','reg-email-err','reg-pass-err','reg-general-err');
 }
 
-// ─── LOGIN ───
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-pass').value;
@@ -1858,7 +1568,6 @@ async function doLogin() {
   loginUser(user.name);
 }
 
-// ─── REGISTER ───
 async function doRegister() {
   const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
@@ -1914,7 +1623,6 @@ async function doRegister() {
   setTimeout(() => document.querySelector('#otp-inputs input').focus(), 200);
 }
 
-// ─── QUÊN MẬT KHẨU ───
 function openForgotModal() {
   document.getElementById('forgot-step1').style.display = 'block';
   document.getElementById('forgot-step2').style.display = 'none';
@@ -1962,7 +1670,6 @@ function closeForgotModal() {
   document.getElementById('forgot-modal').classList.remove('open');
 }
 
-// ─── SESSION MANAGEMENT ───
 function saveSession(userName) {
   sessionStorage.setItem('loggedInUser', userName);
 }
@@ -1983,7 +1690,6 @@ async function restoreSession() {
   return false;
 }
 
-// ─── LOGIN / LOGOUT ───
 let postsUnlisten = null;
 let commentsUnlisten = null;
 let groupsUnlisten = null;
@@ -2062,7 +1768,6 @@ async function doLogout() {
   closeSidebar();
 }
 
-// ─── RENDER POSTS ───
 function renderPosts() {
   const container = document.getElementById('posts-container');
   if (!container) return;
@@ -2114,7 +1819,6 @@ function sharePost(postId) {
   }
 }
 
-// ─── ATTACH ───
 let postAttachImage = null;
 let postAttachFile  = null;
 
@@ -2198,7 +1902,6 @@ async function submitPost() {
   showToast('✅','Đã đăng bài!');
 }
 
-// ─── GROUPS ───
 function renderGroups() {
   const container = document.getElementById('groups-grid');
   if (!container) return;
@@ -2254,7 +1957,6 @@ function renderSidebarMyClubs() {
   }).join('');
 }
 
-// ─── CREATE GROUP MODAL ───
 const emojis = ['🚀','🎯','💡','🎵','⚽','📚','🎨','🤖','🌍','📷','🎭','🏆'];
 function openCreateModal() {
   const picker = document.getElementById('emoji-picker');
@@ -2298,7 +2000,6 @@ async function createGroup() {
   showToast('🎉', name + ' đã được tạo thành công!');
 }
 
-// ─── CLUB DETAIL ───
 let currentClubIdx = null;
 function openClubDetail(idx) {
   currentClubIdx = idx;
@@ -2364,7 +2065,6 @@ function switchClubTab(tab, btn) {
   document.getElementById('club-panel-' + tab).classList.add('active');
 }
 
-// ─── CHAT ───
 let chats = [];
 function renderChats() {
   const container = document.getElementById('chat-items');
@@ -2444,7 +2144,6 @@ function videoCall() {
   setTimeout(() => showToast('🎥', name + ' không bắt máy.'), 3000);
 }
 
-// ─── FRIENDS ───
 function renderFriends() {
   const searchVal = (document.getElementById('friend-search') ? document.getElementById('friend-search').value : '').toLowerCase();
   const container = document.getElementById('friends-list');
@@ -2554,7 +2253,6 @@ function unfriend(name) {
   renderFriends(); showToast('👋', 'Đã hủy kết bạn với ' + name);
 }
 
-// ─── COMMENT MODAL ───
 let currentCommentPostId = null;
 function openCommentModal(postId) {
   currentCommentPostId = postId;
@@ -2606,7 +2304,6 @@ function closeCommentModal() {
   currentCommentPostId = null;
 }
 
-// ─── NAVIGATION ───
 function showPage(page) {
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2629,13 +2326,11 @@ function closeSidebar() {
   document.getElementById('sidebar-overlay').classList.remove('active');
 }
 
-// ─── KHỞI TẠO ───
 window.addEventListener('DOMContentLoaded', async () => {
-  // Đợi Firebase sẵn sàng
   const waitForFB = () => new Promise(resolve => {
     if (window.FB) return resolve();
     document.addEventListener('firebase-ready', resolve, { once: true });
-    setTimeout(resolve, 3000); // timeout fallback
+    setTimeout(resolve, 3000);
   });
   await waitForFB();
 
