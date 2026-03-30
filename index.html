@@ -2756,6 +2756,7 @@ async function initFirebaseData() {
 document.addEventListener('firebase-ready', () => { initFirebaseData(); });
 
 let messages = [];
+let CHATS = []; // ← khai báo mảng CHATS
 let COMMENTS_DB = lsGet(LS_COMMENTS, {});
 let friendRequests = new Set(lsGet(LS_FRIEND_REQS, []));
 let friends = new Set(lsGet(LS_FRIENDS, []));
