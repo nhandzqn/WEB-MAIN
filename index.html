@@ -1704,6 +1704,8 @@
 <body>
 
 <!-- ─── AUTH SCREEN ─── -->
+
+
 <div id="auth-screen">
   <div class="auth-bg"></div>
   <div class="auth-dots"></div>
@@ -2032,7 +2034,7 @@
         </div>
         <div class="messages" id="messages"></div>
         <!-- Emoji picker popup -->
-        <div id="emoji-popup" style="display:none;position:absolute;bottom:80px;left:22px;background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:12px;z-index:200;display:none">
+        <div id="emoji-popup" style="display:none;position:absolute;bottom:80px;left:22px;background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:12px;z-index:200;box-shadow:var(--shadow-heavy);display:none">
           <div style="display:flex;flex-wrap:wrap;gap:6px;max-width:260px">
             😀 😂 😍 🥰 😎 🤩 😢 😡 🥳 🤔 👍 👎 ❤️ 🔥 🎉 💯 🙏 👏 😊 🫶 💪 🤝 👋 😅 🥺 💬 ✨ 🎵 ⚡ 🌟
           </div>
@@ -2536,9 +2538,7 @@
   <span id="toast-msg">Thành công!</span>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const EMAILJS_PUBLIC_KEY  = "6CGF4fJ3G2a05tRUY";
 const EMAILJS_SERVICE_ID  = "service_t73e16c";
 const EMAILJS_TEMPLATE_ID = "template_kumcczq";
@@ -2671,6 +2671,8 @@ function lsSet(key, val) {
 
 // Chuyển LS key → Firebase path (thay dấu _ thành /)
 function lsKeyToFbPath(key) {
+  // vancanh_posts → vancanh/posts
+  // vancanh_likes_Nguyen → vancanh/likes/Nguyen
   return key.replace('vancanh_', 'vancanh/').replace(/_/g, '/');
 }
 
@@ -2734,13 +2736,74 @@ function generateOTP() {
 }
 
 // ─── DATA ───
-// NO DUMMY DATA: posts will be loaded from Firebase/localStorage only
+const DEFAULT_POSTS = [
+  {
+    id: 1, author: "Trần Thị Bình", club: "CLB Lập trình",
+    time: "2 giờ trước", ts: Date.now() - 2*60*60*1000,
+    color: "linear-gradient(135deg,#FF6584,#FF8E53)",
+    initial: "T",
+    body: "Hôm nay CLB Lập trình tổ chức buổi hackathon 24h! Chủ đề năm nay là xây dựng ứng dụng AI hỗ trợ học tập 🤖 Còn 5 suất đăng ký cuối cùng, ai quan tâm DM mình nhé!",
+    likes: 42, comments: 8, hasImage: true, imageEmoji: "💻"
+  },
+  {
+    id: 2, author: "Minh Khoa", club: "CLB Âm nhạc",
+    time: "4 giờ trước", ts: Date.now() - 4*60*60*1000,
+    color: "linear-gradient(135deg,#43E97B,#38F9D7)",
+    initial: "M",
+    body: "🎶 Buổi tập acoustic tối nay cực kỳ chill! Mời mọi người đến sân khấu nhỏ lúc 7h tối nha. Có bánh mì và trà miễn phí 🥐☕",
+    likes: 31, comments: 12, hasImage: false
+  },
+  {
+    id: 3, author: "Hà Phương", club: "CLB Nhiếp ảnh",
+    time: "Hôm qua", ts: Date.now() - 26*60*60*1000,
+    color: "linear-gradient(135deg,#F7971E,#FFD200)",
+    initial: "H",
+    body: "📸 Chia sẻ bộ ảnh street photography tuần này! Ánh sáng buổi chiều tà thật tuyệt vời. Cảm ơn mọi người đã đồng hành 💛",
+    likes: 87, comments: 24, hasImage: true, imageEmoji: "🌅"
+  }
+];
+
+const CHATS = [
+  { id:0, name:"Trần Thị Bình", preview:"Bạn có tham gia hackathon không?", time:"2p", color:"linear-gradient(135deg,#FF6584,#FF8E53)", init:"T", unread:true },
+  { id:1, name:"CLB Lập trình", preview:"Admin: Nhớ nộp project cuối kỳ!", time:"1g", color:"linear-gradient(135deg,#5b6cff,#7b8aff)", init:"💻", unread:true },
+  { id:2, name:"Minh Khoa", preview:"Ok mình sẽ tới! 🎵", time:"3g", color:"linear-gradient(135deg,#43E97B,#38F9D7)", init:"M", unread:false },
+  { id:3, name:"CLB Âm nhạc", preview:"Bạn: Tuyệt vời lắm!", time:"Hôm qua", color:"linear-gradient(135deg,#F7971E,#FFD200)", init:"🎵", unread:true },
+  { id:4, name:"Hà Phương", preview:"Ảnh chụp ra màu đẹp ghê 😍", time:"Hôm qua", color:"linear-gradient(135deg,#F7971E,#FFD200)", init:"H", unread:false },
+];
+
+const SAMPLE_MESSAGES = [
+  { from:"other", text:"Chào bạn! Mình là Bình từ CLB Lập trình 👋", time:"10:30" },
+  { from:"me", text:"Chào Bình! Mình nghe nói có hackathon sắp tới à?", time:"10:31" },
+  { from:"other", text:"Đúng rồi! Hackathon 24h, chủ đề AI. Bạn có muốn tham gia nhóm với mình không?", time:"10:32" },
+  { from:"me", text:"Nghe hay đó! Mình có chút kinh nghiệm Python, còn thiếu mấy người nữa không?", time:"10:34" },
+  { from:"other", text:"Còn thiếu 1 người nữa thôi! Bạn có tham gia không?", time:"10:35" },
+];
+
+const DEFAULT_GROUPS = [
+  { name:"CLB Lập trình", desc:"Nơi các lập trình viên gặp gỡ, học hỏi và xây dựng dự án.", emoji:"💻", members:156, joined:false, color:"rgba(91,108,255,0.12)" },
+  { name:"CLB Âm nhạc", desc:"Khám phá âm nhạc, tập acoustic, biểu diễn và kết bạn qua âm thanh.", emoji:"🎵", members:98, joined:false, color:"rgba(52,211,153,0.08)" },
+  { name:"CLB Nhiếp ảnh", desc:"Chia sẻ tình yêu với nhiếp ảnh, tổ chức photo walk hàng tháng.", emoji:"📷", members:74, joined:false, color:"rgba(247,151,30,0.08)" },
+  { name:"CLB Tiếng Anh", desc:"Luyện nói, viết và giao lưu mỗi tuần.", emoji:"🌍", members:203, joined:false, color:"rgba(56,249,215,0.06)" },
+  { name:"CLB AI & Data", desc:"Nghiên cứu machine learning, data science và trí tuệ nhân tạo.", emoji:"🤖", members:128, joined:false, color:"rgba(91,108,255,0.08)" },
+  { name:"CLB Thể thao", desc:"Tổ chức giải đấu nội bộ, tập luyện cùng nhau hàng ngày.", emoji:"⚽", members:210, joined:false, color:"rgba(255,92,138,0.08)" },
+];
+
+const SAMPLE_USERS = [
+  { name: "Trần Thị Bình", club: "CLB Lập trình", initial: "T", color: "linear-gradient(135deg,#FF6584,#FF8E53)", status: "Đang hoạt động" },
+  { name: "Minh Khoa", club: "CLB Âm nhạc", initial: "M", color: "linear-gradient(135deg,#43E97B,#38F9D7)", status: "Đang hoạt động" },
+  { name: "Hà Phương", club: "CLB Nhiếp ảnh", initial: "H", color: "linear-gradient(135deg,#F7971E,#FFD200)", status: "30 phút trước" },
+  { name: "Lê Minh Tuấn", club: "CLB Tiếng Anh", initial: "L", color: "linear-gradient(135deg,#38F9D7,#5b6cff)", status: "1 giờ trước" },
+  { name: "Nguyễn Thảo", club: "CLB AI & Data", initial: "N", color: "linear-gradient(135deg,#5b6cff,#FF6584)", status: "Đang hoạt động" },
+  { name: "Phạm Đức Anh", club: "CLB Thể thao", initial: "P", color: "linear-gradient(135deg,#FFD200,#FF6584)", status: "2 giờ trước" },
+];
+
 let posts = lsGet(LS_POSTS, null);
-if (!posts) posts = [];
+if (!posts) { posts = DEFAULT_POSTS.map(p=>({...p})); lsSet(LS_POSTS, posts); }
+// ✅ FIX: localPosts lưu bài vừa đăng chưa kịp sync lên Firebase
 let localPosts = [];
 
 let groups = lsGet(LS_GROUPS, null);
-if (!groups) groups = [];
+if (!groups) { groups = DEFAULT_GROUPS.map(g=>({...g})); lsSet(LS_GROUPS, groups); }
 
 // Khi Firebase sẵn sàng, tải dữ liệu công khai (posts, comments, users)
 async function initFirebaseData() {
@@ -2749,6 +2812,9 @@ async function initFirebaseData() {
   if (fbPosts) {
     posts = Array.isArray(fbPosts) ? fbPosts : Object.values(fbPosts);
     lsSet(LS_POSTS, posts);
+  } else {
+    // Nếu Firebase trống, đẩy DEFAULT_POSTS lên (không kèm imageData)
+    await window.FB.set('vancanh/posts', posts.map(p => { const{imageData:_d,...r}=p; return r; }));
   }
   const fbComments = await window.FB.get('vancanh/comments');
   if (fbComments) { COMMENTS_DB = fbComments; lsSet(LS_COMMENTS, COMMENTS_DB); }
@@ -2756,7 +2822,6 @@ async function initFirebaseData() {
 document.addEventListener('firebase-ready', () => { initFirebaseData(); });
 
 let messages = [];
-let CHATS = []; // ← khai báo mảng CHATS
 let COMMENTS_DB = lsGet(LS_COMMENTS, {});
 let friendRequests = new Set(lsGet(LS_FRIEND_REQS, []));
 let friends = new Set(lsGet(LS_FRIENDS, []));
@@ -3043,11 +3108,23 @@ async function loginUser(name) {
     }
     friendRequests = new Set(lsGet(LS_FRIEND_REQS + '_' + name, []));
     if (fbGroups) {
+      // Firebase lưu array thành object {0:...,1:...} → chuyển về array
       groups = Array.isArray(fbGroups) ? fbGroups : Object.values(fbGroups);
+      // Merge lại với DEFAULT_GROUPS để không thiếu CLB mới
+      DEFAULT_GROUPS.forEach(dg => {
+        if (!groups.find(g => g.name === dg.name)) groups.push({...dg});
+      });
       lsSet(LS_GROUPS + '_' + name, groups);
     } else {
       const lg = lsGet(LS_GROUPS + '_' + name, null);
-      groups = lg && Array.isArray(lg) ? lg : [];
+      if (lg) {
+        groups = Array.isArray(lg) ? lg : Object.values(lg);
+        DEFAULT_GROUPS.forEach(dg => {
+          if (!groups.find(g => g.name === dg.name)) groups.push({...dg});
+        });
+      } else {
+        groups = DEFAULT_GROUPS.map(g => ({...g}));
+      }
     }
     // Load danh sách chat từ friends_list → thêm vào CHATS
     if (fbFriendsList) {
@@ -3062,7 +3139,7 @@ async function loginUser(name) {
     friends        = new Set(lsGet(LS_FRIENDS + '_' + name, []));
     friendRequests = new Set(lsGet(LS_FRIEND_REQS + '_' + name, []));
     const savedGroups = lsGet(LS_GROUPS + '_' + name, null);
-    groups = savedGroups || [];
+    groups = savedGroups || DEFAULT_GROUPS.map(g => ({...g}));
   }
 
   // ✅ Khôi phục group chat CLB (sau khi đã có groups)
@@ -3081,18 +3158,22 @@ async function loginUser(name) {
 
   // Lắng nghe realtime posts từ Firebase
   if (_postsUnlisten) _postsUnlisten();
+  // ✅ FIX: reset localPosts khi đăng nhập, hiện bài ngay từ cache
   localPosts = [];
   renderPosts();
   if (window.FB && window.FB.ready) {
     _postsUnlisten = window.FB.listen('vancanh/posts', async val => {
       if (val) {
         const cloudPosts = Array.isArray(val) ? val : Object.values(val);
+        // ✅ FIX: ảnh được lưu riêng tại vancanh/post_images/{id} — fetch về cho các bài chưa có trong cache
         const postsNeedImg = cloudPosts.filter(p => p.hasImage && !_imgCache['img_' + p.id]);
         await Promise.all(postsNeedImg.map(async p => {
+          // ✅ Thử IDB trước (nhanh, không tốn quota Firebase)
           try {
             const cached = await idbGet('img_' + p.id);
             if (cached) { _imgCache['img_' + p.id] = cached; return; }
           } catch(e) {}
+          // Nếu không có trong IDB mới fetch Firebase
           const img = await window.FB.get('vancanh/post_images/' + p.id);
           if (img) { _imgCache['img_' + p.id] = img; idbSet('img_' + p.id, img); }
           else if (p.imageData) { _imgCache['img_' + p.id] = p.imageData; }
@@ -3100,11 +3181,12 @@ async function loginUser(name) {
         posts = cloudPosts.map(p => {
           const cachedImg = _imgCache['img_' + p.id];
           if (p.hasImage && cachedImg) return { ...p, imageData: cachedImg };
-          if (p.imageData) return p;
+          if (p.imageData) return p; // backward-compat: bài cũ còn imageData trong posts node
           const savedImg = lsGet('vancanh_post_img_' + String(p.id), null);
           if (p.hasImage && savedImg) { _imgCache['img_' + p.id] = savedImg; return { ...p, imageData: savedImg }; }
           return p;
         });
+        // Thêm các bài local chưa sync lên cloud (vừa đăng xong)
         localPosts.forEach(lp => {
           if (!cloudPosts.find(cp => String(cp.id) === String(lp.id))) {
             if (lp.hasImage && !lp.imageData && _imgCache['img_' + lp.id]) {
@@ -3114,16 +3196,18 @@ async function loginUser(name) {
           }
         });
         posts.sort((a, b) => (b.ts || b.id) - (a.ts || a.id));
+        // Lưu localStorage KHÔNG có imageData (tránh tràn quota)
         lsSet(LS_POSTS, posts.map(p => { const {imageData, ...rest} = p; return {...rest, imageData: null}; }));
         renderPosts();
       }
     });
+    // Lắng nghe realtime comments
     if (_commentsUnlisten) _commentsUnlisten();
     _commentsUnlisten = window.FB.listen('vancanh/comments', val => {
       if (val) { COMMENTS_DB = val; lsSet(LS_COMMENTS, COMMENTS_DB); }
     });
   } else {
-    posts = lsGet(LS_POSTS, null) || [];
+    posts = lsGet(LS_POSTS, null) || DEFAULT_POSTS.map(p=>({...p}));
     loadImagesIntoCache(posts).then(() => renderPosts());
   }
 
@@ -3131,6 +3215,7 @@ async function loginUser(name) {
   renderGroups();
   renderFriends();
   renderSidebarMyClubs();
+  // Lắng nghe hộp thư kết bạn + danh sách bạn bè realtime
   listenInbox();
   listenFriendsList();
   listenNotifications();
@@ -3147,6 +3232,7 @@ async function doLogout() {
     lsSet(LS_FRIENDS + '_' + n, [...friends]);
     lsSet(LS_FRIEND_REQS + '_' + n, [...friendRequests]);
     lsSet(LS_GROUPS + '_' + n, groups);
+    // Đồng bộ lên Firebase khi đăng xuất
     if (window.FB && window.FB.ready) {
       await window.FB.set('vancanh/likes/' + safe, [...likedPosts]);
       await window.FB.set('vancanh/friends/' + safe, [...friends]);
@@ -3154,6 +3240,7 @@ async function doLogout() {
       await window.FB.set('vancanh/joined_groups/' + safe, groups);
     }
   }
+  // Hủy lắng nghe realtime
   if (_postsUnlisten) { _postsUnlisten(); _postsUnlisten = null; }
   if (_commentsUnlisten) { _commentsUnlisten(); _commentsUnlisten = null; }
   if (_chatUnlisten) { _chatUnlisten(); _chatUnlisten = null; }
@@ -3164,8 +3251,17 @@ async function doLogout() {
   _onlineUnlistens.forEach(f => f()); _onlineUnlistens = [];
   _allChatsUnlistens.forEach(f => f()); _allChatsUnlistens = [];
   setOffline();
+  // ✅ Xóa session đã lưu khi đăng xuất thực sự
   lsSet('vc_session', null);
+  // ✅ Reset CHATS
   CHATS.length = 0;
+  CHATS.push(
+    { id:0, name:"Trần Thị Bình", preview:"Bạn có tham gia hackathon không?", time:"2p", color:"linear-gradient(135deg,#FF6584,#FF8E53)", init:"T", unread:true },
+    { id:1, name:"CLB Lập trình", preview:"Admin: Nhớ nộp project cuối kỳ!", time:"1g", color:"linear-gradient(135deg,#5b6cff,#7b8aff)", init:"💻", unread:true },
+    { id:2, name:"Minh Khoa", preview:"Ok mình sẽ tới! 🎵", time:"3g", color:"linear-gradient(135deg,#43E97B,#38F9D7)", init:"M", unread:false },
+    { id:3, name:"CLB Âm nhạc", preview:"Bạn: Tuyệt vời lắm!", time:"Hôm qua", color:"linear-gradient(135deg,#F7971E,#FFD200)", init:"🎵", unread:true },
+    { id:4, name:"Hà Phương", preview:"Ảnh chụp ra màu đẹp ghê 😍", time:"Hôm qua", color:"linear-gradient(135deg,#F7971E,#FFD200)", init:"H", unread:false }
+  );
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.body.style.overflow = 'auto';
@@ -3192,10 +3288,12 @@ function showPage(page) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const idx = {feed:0, chat:1, groups:2, friends:3, about:4}[page];
   if(idx !== undefined) document.querySelectorAll('.nav-item')[idx].classList.add('active');
+  // Highlight new section nav items
   const newPages = ['news','gallery','calendar','leaderboard'];
   if (newPages.includes(page)) {
     const extraIdx = newPages.indexOf(page);
     const allNavItems = document.querySelectorAll('.nav-item');
+    // New items start at index 5 (after about=4)
     if (allNavItems[5 + extraIdx]) allNavItems[5 + extraIdx].classList.add('active');
   }
   if(page === 'chat') { messages = []; renderChats(); renderMessages(); if(CHATS.length>0) selectChat(currentChat); }
@@ -3222,6 +3320,7 @@ async function openClubDetail(idx) {
 
   const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
 
+  // Cập nhật số thành viên thực từ Firebase
   if (window.FB && window.FB.ready) {
     const count = await window.FB.get('vancanh/club_member_count/' + safeClub);
     if (count !== null) {
@@ -3231,9 +3330,29 @@ async function openClubDetail(idx) {
   }
   document.getElementById('club-detail-members').textContent = '👥 ' + g.members + ' thành viên';
 
-  await renderClubPostsList(idx);
+  // render posts
+  document.getElementById('club-panel-posts').innerHTML = [
+    { author: 'Admin CLB', text: 'Chào mừng đến với ' + g.name + '! 🎉 Hãy cùng nhau chia sẻ và học hỏi.', time: '1 ngày trước' },
+    { author: 'Thành viên', text: 'Buổi sinh hoạt tuần này rất thú vị! Mọi người cùng tham gia nhé 💪', time: '2 ngày trước' },
+  ].map(p => `
+    <div class="club-post-card">
+      <div class="post-header">
+        <div class="avatar sm" style="background:linear-gradient(135deg,var(--accent),var(--accent-light))">${p.author.charAt(0)}</div>
+        <div class="post-meta"><div class="post-author">${p.author}</div><div class="post-time">${p.time}</div></div>
+        <span class="post-club-tag">${g.name}</span>
+      </div>
+      <div class="post-body">${p.text}</div>
+      <div class="post-actions">
+        <button class="btn-action">🤍 0</button>
+        <button class="btn-action">💬 0</button>
+      </div>
+    </div>
+  `).join('');
+
+  // render members (từ Firebase)
   await renderClubMembers(idx);
 
+  // Kiểm tra quyền Chủ CLB để hiện nút giải tán
   const disbandBtn = document.getElementById('btn-disband-club');
   if (disbandBtn) {
     disbandBtn.style.display = 'none';
@@ -3246,8 +3365,10 @@ async function openClubDetail(idx) {
     }
   }
 
+  // render events
   await renderClubEvents(idx);
 
+  // Switch to tab posts
   document.querySelectorAll('.club-detail-tab').forEach((t,i) => t.classList.toggle('active', i===0));
   document.querySelectorAll('.club-detail-panel').forEach((p,i) => p.classList.toggle('active', i===0));
 
@@ -3269,13 +3390,16 @@ async function renderClubMembers(idx) {
     const members = await window.FB.get('vancanh/club_members/' + safeClub) || {};
     const memberList = Object.values(members);
 
+    // Tìm chủ CLB và phó CLB
     const leader = memberList.find(m => m.role === 'Chủ CLB');
     const deputies = memberList.filter(m => m.role === 'Phó CLB');
     const myRoleInClub = memberList.find(m => m.name === (currentUser && currentUser.name));
     const isLeaderOfThisClub = myRoleInClub && myRoleInClub.role === 'Chủ CLB';
 
+    // ── LEADERSHIP SECTION ──
     leadershipHtml = `<div class="leadership-section">
       <div class="leadership-title">👑 Ban lãnh đạo CLB</div>
+      <!-- Chủ CLB -->
       <div class="leadership-slot" style="border-color:rgba(251,191,36,0.3)">
         <div class="avatar sm" style="background:${leader ? (leader.color||'linear-gradient(135deg,#fbbf24,#f59e0b)') : 'var(--surface3)'}">
           ${leader ? (leader.initial||leader.name.charAt(0)) : '?'}
@@ -3291,6 +3415,7 @@ async function renderClubMembers(idx) {
           : `<button class="btn-assign" onclick="openAssignModal('${g.name}','leader','assign','')">＋ Bổ nhiệm</button>`)
           : ''}
       </div>
+      <!-- Phó CLB 1 -->
       ${[0,1].map(di => {
         const dep = deputies[di];
         return `<div class="leadership-slot" style="border-color:rgba(52,211,153,0.25)">
@@ -3311,6 +3436,7 @@ async function renderClubMembers(idx) {
       }).join('')}
     </div>`;
 
+    // Yêu cầu tham gia chờ duyệt (chỉ Chủ CLB của CLB này thấy)
     const requests = isLeaderOfThisClub ? (await window.FB.get('vancanh/club_join_requests/' + safeClub) || {}) : {};
     const reqList = Object.values(requests);
     if (isLeaderOfThisClub && reqList.length > 0) {
@@ -3332,6 +3458,7 @@ async function renderClubMembers(idx) {
       </div>`;
     }
 
+    // Danh sách thành viên
     if (memberList.length === 0) {
       membersHtml = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Chưa có thành viên nào</div>';
     } else {
@@ -3355,9 +3482,20 @@ async function renderClubMembers(idx) {
       </div>`;
     }
   } else {
+    // Offline fallback
+    const sampleMembers = [
+      { name:'Trần Thị Bình', role:'Chủ CLB', color:'linear-gradient(135deg,#FF6584,#FF8E53)' },
+      { name:'Minh Khoa', role:'Phó CLB', color:'linear-gradient(135deg,#43E97B,#38F9D7)' },
+      { name:'Hà Phương', role:'Thành viên', color:'linear-gradient(135deg,#F7971E,#FFD200)' },
+    ];
     leadershipHtml = `<div class="leadership-section"><div class="leadership-title">👑 Ban lãnh đạo CLB</div>
       <div style="color:var(--muted);font-size:13px">Cần kết nối internet để xem</div></div>`;
-    membersHtml = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Chưa có thành viên nào</div>';
+    membersHtml = sampleMembers.map(m => `
+      <div class="club-member-card">
+        <div class="avatar sm" style="background:${m.color}">${m.name.charAt(0)}</div>
+        <div class="member-info"><div class="member-name">${m.name}</div><div class="member-role">${m.role}</div></div>
+      </div>
+    `).join('');
   }
 
   document.getElementById('club-panel-members').innerHTML = leadershipHtml + membersHtml + pendingHtml;
@@ -3366,6 +3504,7 @@ async function renderClubMembers(idx) {
 async function renderClubEvents(idx) {
   const g = groups[idx];
   const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
+  // Kiểm tra xem user có phải Chủ CLB của CLB này không
   let isLeader = false;
   if (currentUser && window.FB && window.FB.ready) {
     const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
@@ -3373,7 +3512,11 @@ async function renderClubEvents(idx) {
     isLeader = myData && myData.role === 'Chủ CLB';
   }
 
-  let events = [];
+  let events = [
+    { id:'ev1', day:'28', month:'T3', title:'Buổi sinh hoạt tuần', desc:'Thảo luận dự án mới và chia sẻ kinh nghiệm' },
+    { id:'ev2', day:'05', month:'T4', title:'Workshop chuyên đề', desc:'Nâng cao kỹ năng và trao đổi kiến thức' },
+  ];
+
   if (window.FB && window.FB.ready) {
     const fbEvents = await window.FB.get('vancanh/club_events/' + safeClub);
     if (fbEvents) events = Object.entries(fbEvents).map(([k,v]) => ({...v, id:k}));
@@ -3418,12 +3561,14 @@ async function openAssignModal(clubName, slotType, action, targetName) {
     return;
   }
 
+  // action === 'assign'
   const isLeader = slotType === 'leader';
   title.textContent = isLeader ? '👑 Bổ nhiệm Chủ CLB' : '🌟 Bổ nhiệm Phó CLB';
   desc.textContent = isLeader
     ? 'Chọn 1 thành viên để làm Chủ CLB. CLB chỉ có duy nhất 1 Chủ.'
     : 'Chọn 1 thành viên để làm Phó CLB. CLB tối đa 2 Phó.';
 
+  // Lấy danh sách thành viên hiện tại
   const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
   list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px;font-size:13px">⏳ Đang tải...</div>';
   modal.classList.add('open');
@@ -3431,8 +3576,9 @@ async function openAssignModal(clubName, slotType, action, targetName) {
   if (window.FB && window.FB.ready) {
     const members = await window.FB.get('vancanh/club_members/' + safeClub) || {};
     const memberList = Object.values(members).filter(m => {
+      // Không thể bổ nhiệm người đã là Chủ CLB hoặc đã là Phó khi bổ nhiệm Phó khác
       if (isLeader) return m.role !== 'Chủ CLB';
-      return m.role !== 'Chủ CLB' && m.role !== 'Phó CLB';
+      return m.role !== 'Chủ CLB' && m.role !== 'Phó CLB'; // chỉ chọn thành viên thường làm phó
     });
     if (memberList.length === 0) {
       list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Không có thành viên phù hợp để bổ nhiệm</div>';
@@ -3454,8 +3600,10 @@ async function openAssignModal(clubName, slotType, action, targetName) {
 }
 
 function selectAssignMember(name, initial, color) {
+  // Deselect tất cả
   document.querySelectorAll('#assign-member-list .member-pick-row').forEach(r => r.classList.remove('selected'));
   document.querySelectorAll('[id^="pick-check-"]').forEach(c => c.style.opacity = '0');
+  // Select
   _assignSelectedMember = { name, initial, color };
   const safeId = name.replace(/\s/g,'-');
   const row = document.getElementById('pick-' + safeId);
@@ -3472,7 +3620,9 @@ async function confirmAssign() {
   const newRole = slotType === 'leader' ? 'Chủ CLB' : 'Phó CLB';
 
   if (window.FB && window.FB.ready) {
+    // Cập nhật role của thành viên được chọn
     await window.FB.update('vancanh/club_members/' + safeClub + '/' + safeMember, { role: newRole });
+    // Nếu là Chủ CLB: xóa Chủ cũ nếu có
     if (slotType === 'leader') {
       const members = await window.FB.get('vancanh/club_members/' + safeClub) || {};
       for (const [k, m] of Object.entries(members)) {
@@ -3485,6 +3635,7 @@ async function confirmAssign() {
   }
   closeAssignModal();
   await renderClubMembers(currentClubIdx);
+  // Refresh groups để cập nhật hiển thị leader
   renderGroups();
 }
 
@@ -3506,6 +3657,7 @@ function closeAssignModal() {
 
 // ─── CLUB LEADER ACTIONS ───
 async function kickMember(clubName, memberName) {
+  // Kiểm tra xem người dùng có phải Chủ CLB của CLB này không
   const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
   const safeSelf = currentUser ? currentUser.name.replace(/[.#$[\]/]/g,'_') : '';
   if (window.FB && window.FB.ready && safeSelf) {
@@ -3577,6 +3729,7 @@ async function disbandClub() {
   const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
   const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
 
+  // Kiểm tra quyền Chủ CLB
   if (window.FB && window.FB.ready) {
     const myData = await window.FB.get('vancanh/club_members/' + safeClub + '/' + safeSelf);
     if (!myData || myData.role !== 'Chủ CLB') {
@@ -3585,6 +3738,7 @@ async function disbandClub() {
     }
   }
 
+  // Xác nhận 2 lần cho hành động nghiêm trọng
   const confirmed = confirm(
     '⚠️ CẢNH BÁO: Bạn sắp giải tán "' + g.name + '"!\n\n' +
     '• Toàn bộ thành viên sẽ bị xóa khỏi CLB\n' +
@@ -3599,10 +3753,12 @@ async function disbandClub() {
 
   try {
     if (window.FB && window.FB.ready) {
+      // Lấy danh sách thành viên trước để gửi thông báo
       const members = await window.FB.get('vancanh/club_members/' + safeClub) || {};
       const now = new Date();
       const timeStr = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
 
+      // Gửi thông báo giải tán cho từng thành viên
       Object.keys(members).forEach(memberKey => {
         if (memberKey === safeSelf) return;
         window.FB.push('vancanh/notifications/' + memberKey, {
@@ -3614,6 +3770,7 @@ async function disbandClub() {
         });
       });
 
+      // Xóa toàn bộ dữ liệu CLB trên Firebase
       await window.FB.remove('vancanh/club_members/' + safeClub);
       await window.FB.remove('vancanh/club_member_count/' + safeClub);
       await window.FB.remove('vancanh/club_join_requests/' + safeClub);
@@ -3621,6 +3778,7 @@ async function disbandClub() {
       await window.FB.remove('vancanh/club_posts/' + safeClub);
       await window.FB.remove('vancanh/group_calls/' + g.name.replace(/[.#$[\]/]/g,'-'));
 
+      // Xóa CLB khỏi danh sách joined_groups của tất cả user
       Object.keys(members).forEach(memberKey => {
         window.FB.get('vancanh/joined_groups/' + memberKey).then(jg => {
           if (!jg) return;
@@ -3630,9 +3788,11 @@ async function disbandClub() {
       });
     }
 
+    // Xóa CLB khỏi mảng groups local
     groups.splice(currentClubIdx, 1);
     lsSet(LS_GROUPS + '_' + currentUser.name, groups);
 
+    // Chuyển về trang CLB
     showPage('groups');
     renderGroups();
     showToast('🏛️', 'Đã giải tán câu lạc bộ "' + g.name + '" thành công!');
@@ -3722,13 +3882,15 @@ function switchClubTab(tab, btn) {
 }
 
 // ─── FEED ───
+// ✅ Hiển thị thời gian đăng bài chính xác
 function formatPostTime(p) {
   const ts = p.ts || null;
-  if (!ts) return p.time || '';
+  if (!ts) return p.time || ''; // bài sample cũ dùng string gốc
   const now = Date.now();
   const diff = now - ts;
   const mins = Math.floor(diff / 60000);
   if (mins < 1) {
+    // Hiện giờ:phút thực tế
     const d = new Date(ts);
     const hh = String(d.getHours()).padStart(2, '0');
     const mm = String(d.getMinutes()).padStart(2, '0');
@@ -3749,13 +3911,15 @@ function formatPostTime(p) {
     const mm = String(d.getMinutes()).padStart(2, '0');
     return hh + ':' + mm + ' hôm qua';
   }
+  // Lâu hơn → ngày/tháng/năm
   const d = new Date(ts);
   return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 function renderPosts() {
   const container = document.getElementById('posts-container');
-  if (!posts || !posts.length) posts = lsGet(LS_POSTS, []);
+  // Dùng biến posts trong bộ nhớ (đã có imageData đầy đủ), KHÔNG đọc lại từ localStorage
+  if (!posts || !posts.length) posts = lsGet(LS_POSTS, DEFAULT_POSTS);
   container.innerHTML = posts.map(p => `
     <div class="post-card">
       <div class="post-header">
@@ -3795,6 +3959,7 @@ function toggleLike(id, btn) {
       const safe = currentUser.name.replace(/[.#$[\]]/g, '_');
       window.FB.set('vancanh/likes/' + safe, [...likedPosts]);
     }
+    // Cộng điểm XP khi thích bài (không trừ khi bỏ thích)
     if (!wasLiked) awardXP(2, '❤️ Thích bài viết');
   }
   renderPosts();
@@ -3858,9 +4023,10 @@ async function submitPost() {
   const input = document.getElementById('post-input');
   const text = input.value.trim();
   if(!text && !postAttachImage && !postAttachFile) { showToast('⚠️','Vui lòng nhập nội dung hoặc đính kèm ảnh/file!'); return; }
-  if (!posts || !posts.length) posts = lsGet(LS_POSTS, []);
+  if (!posts || !posts.length) posts = lsGet(LS_POSTS, DEFAULT_POSTS);
   const now = Date.now();
 
+  // ✅ Nén ảnh xuống ~40KB trước khi lưu (dùng được Firebase free tier)
   let imageData = null;
   if (postAttachImage && postAttachImage.dataUrl) {
     showToast('⏳', 'Đang xử lý ảnh...');
@@ -3874,21 +4040,25 @@ async function submitPost() {
     initial: currentUser.initial,
     body: text || '', likes: 0, comments: 0,
     hasImage: !!imageData,
-    imageData: imageData || null,
+    imageData: imageData || null,   // ✅ base64 đã nén — đồng bộ được Firebase RTDB
     imageEmoji: null,
     hasFile: !!postAttachFile,
     fileName: postAttachFile ? postAttachFile.name : null,
     fileSize: postAttachFile ? postAttachFile.size : null
   };
   posts.unshift(newPost);
+  // ✅ FIX: thêm vào localPosts để listener Firebase không mất bài vừa đăng
   localPosts.unshift(newPost);
 
+  // Lưu IndexedDB local (cache nhanh cho máy hiện tại)
   if (imageData) {
     idbSet('img_' + newPost.id, imageData);
   }
 
+  // Lưu posts localStorage KHÔNG kèm imageData (tránh tràn 5MB)
   lsSet(LS_POSTS, posts.map(p => { const { imageData: _d, ...rest } = p; return rest; }));
 
+  // ✅ Nếu có ảnh → tự động thêm vào thư viện gallery
   if (imageData) {
     const galleryEntry = {
       id: now + 1, emoji: '📸',
@@ -3906,12 +4076,15 @@ async function submitPost() {
     }
   }
 
+  // ✅ Đồng bộ posts lên Firebase — chỉ lưu metadata (không có imageData → payload nhỏ, sync nhanh)
   if (window.FB && window.FB.ready) {
     const postsForCloud = posts.map(p => { const {imageData:_d,...r}=p; return r; });
     window.FB.set('vancanh/posts', postsForCloud).then(() => {
       showToast('✅', 'Đã đăng bài — đồng bộ lên cloud ☁️');
+      // ✅ FIX: dọn localPosts sau khi đã sync thành công
       localPosts = localPosts.filter(lp => lp.id !== newPost.id);
     }).catch(() => showToast('✅', 'Đã đăng bài (lưu local)'));
+    // ✅ Lưu imageData riêng tại vancanh/post_images/{id} — tách khỏi mảng posts
     if (imageData) {
       window.FB.set('vancanh/post_images/' + newPost.id, imageData);
     }
@@ -3929,19 +4102,25 @@ async function submitPost() {
 // ─── DELETE POST ───
 async function deletePost(postId) {
   if (!currentUser) return;
+  // Tìm bài để xác nhận quyền
   const post = posts.find(p => p.id === postId);
   if (!post) return;
   if (post.author !== currentUser.name) { showToast('🚫', 'Bạn chỉ có thể xóa bài của chính mình!'); return; }
   if (!confirm('Xóa bài viết này?')) return;
 
+  // Xóa khỏi mảng trong RAM
   posts = posts.filter(p => p.id !== postId);
 
+  // Xóa imageData khỏi IndexedDB + localStorage
   idbDelete('img_' + postId);
   try { localStorage.removeItem('vancanh_post_img_' + postId); } catch(e) {}
 
+  // Lưu lại localStorage không có imageData
   lsSet(LS_POSTS, posts.map(p => { const {imageData, ...rest} = p; return {...rest, imageData: null}; }));
 
+  // Đồng bộ lên Firebase — posts nhẹ (không imageData), xóa ảnh riêng
   if (window.FB && window.FB.ready) {
+    // ✅ FIX: xóa node ảnh riêng, posts chỉ lưu metadata → sync nhanh, đáng tin cậy
     if (post.hasImage) {
       window.FB.remove('vancanh/post_images/' + postId);
       delete _imgCache['img_' + postId];
@@ -3956,6 +4135,7 @@ async function deletePost(postId) {
 
 // ─── SHARE ───
 function sharePost(postId) {
+  // ✅ FIX: dùng posts trong RAM, không đọc lại từ localStorage (sẽ mất imageData)
   const post = posts.find(p => p.id === postId);
   if(!post) return;
   if(navigator.share) {
@@ -3968,16 +4148,18 @@ function sharePost(postId) {
 
 // ─── CHAT (Firebase Realtime Messaging) ───
 const LS_CHAT_MSGS = 'vc_chat_msgs';
-const LS_CLUB_CHATS = 'vc_club_chats';
+const LS_CLUB_CHATS = 'vc_club_chats'; // Lưu danh sách group chat CLB
 let _chatUnlisten = null;
 let chatSearchFilter = '';
 
+// Tạo chat key giữa 2 người (đồng nhất không phụ thuộc thứ tự)
 function getChatKey(userA, userB) {
   const a = userA.replace(/[.#$[\]/]/g,'_');
   const b = userB.replace(/[.#$[\]/]/g,'_');
   return [a, b].sort().join('__');
 }
 
+// ✅ FIX: Key riêng cho group chat CLB — không trộn với chat 1-1
 function getGroupChatKey(clubName) {
   return 'group__' + clubName.replace(/[.#$[\]/\s]/g,'_');
 }
@@ -4021,6 +4203,7 @@ function selectChat(idx) {
   document.getElementById('chat-partner-name').textContent = c.name;
   document.getElementById('chat-partner-avatar').textContent = c.init;
   document.getElementById('chat-partner-avatar').style.background = c.color;
+  // ✅ Chat 1-1: hiện nút gọi WebRTC | Group chat: hiện nút gọi nhóm Jitsi
   const btnAudio = document.getElementById('btn-call-audio');
   const btnVideo = document.getElementById('btn-call-video');
   const btnGroup = document.getElementById('btn-call-group');
@@ -4036,31 +4219,38 @@ function selectChat(idx) {
   messages = [];
   renderMessages();
   renderChats();
+  // Lắng nghe realtime tin nhắn với người này
   if (_chatUnlisten) { _chatUnlisten(); _chatUnlisten = null; }
   if (window.FB && window.FB.ready && currentUser) {
+    // ✅ FIX: group chat CLB dùng key riêng, không trộn với chat 1-1
     const chatKey = c.isGroup ? getGroupChatKey(c.clubName || c.name) : getChatKey(currentUser.name, c.name);
     _chatUnlisten = window.FB.listen('vancanh/chats/' + chatKey + '/messages', val => {
       if (val) {
         let allMsgs = Array.isArray(val) ? val : Object.values(val);
         allMsgs.sort((a,b) => a.ts - b.ts);
+        // ✅ Lọc tin đã xóa local (phía mình)
         const hidden = lsGet('vc_hidden_chats_' + currentUser.name, {});
         const hideTs = hidden[chatKey] || 0;
         messages = hideTs ? allMsgs.filter(m => m.ts > hideTs) : allMsgs;
       } else {
         messages = [];
       }
+      // Cập nhật preview
       if (messages.length > 0) {
         const last = messages[messages.length - 1];
         CHATS[idx].preview = (last.from === currentUser.name ? 'Bạn: ' : (last.from ? last.from + ': ' : '')) + (last.img ? '📷 Ảnh' : last.text);
         CHATS[idx].time = last.time || '';
+        // ✅ Lưu lại preview mới nhất vào localStorage + Firebase
         saveClubChats();
         renderChats();
       }
       renderMessages();
     });
+    // Typing/online chỉ cho chat 1-1
     if (!c.isGroup) {
       listenPartnerOnline(c.name);
       listenTyping(chatKey, c.name);
+      // Đánh dấu đã đọc thông báo tin nhắn từ người này
       const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
       window.FB.get('vancanh/notifications/' + safeSelf).then(val => {
         if (!val) return;
@@ -4072,9 +4262,10 @@ function selectChat(idx) {
       });
     }
   } else {
+    // Offline: dùng localStorage
     const chatKey = c.isGroup ? getGroupChatKey(c.clubName || c.name) : getChatKey(currentUser ? currentUser.name : 'me', c.name);
     const allMsgs = lsGet(LS_CHAT_MSGS, {});
-    messages = allMsgs[chatKey] || [];
+    messages = allMsgs[chatKey] || (idx === 0 ? [...SAMPLE_MESSAGES] : []);
     renderMessages();
   }
 }
@@ -4109,6 +4300,7 @@ function renderMessages() {
       ? `<div style="font-size:11px;color:var(--muted);margin-bottom:3px;font-weight:600">${m.from}</div>`
       : '';
     const avatarInit = isGroup && !isMe && m.from ? m.from.charAt(0).toUpperCase() : partnerInit;
+    // Nút ··· chỉ hiện khi không phải tin đã thu hồi
     const moreBtn = !isRecalled
       ? `<button class="msg-more-btn" onclick="openMsgCtx(event,${i},${isMe})" title="Tùy chọn">···</button>`
       : '';
@@ -4154,6 +4346,7 @@ function openMsgCtx(e, msgIdx, isMe) {
   ).join('');
   document.body.appendChild(menu);
   _ctxMenu = menu;
+  // Vị trí menu
   const x = Math.min(e.clientX, window.innerWidth - 190);
   const y = Math.min(e.clientY, window.innerHeight - (items.length * 44 + 16));
   menu.style.left = x + 'px';
@@ -4164,9 +4357,11 @@ function openMsgCtx(e, msgIdx, isMe) {
   setTimeout(() => document.addEventListener('click', closeCtxMenu, { once: true }), 0);
 }
 
+// Xóa tin nhắn chỉ phía mình (local only, không ảnh hưởng đối phương)
 function deleteMessageLocal(msgIdx) {
   messages.splice(msgIdx, 1);
   renderMessages();
+  // Cập nhật preview
   if (messages.length > 0) {
     const last = messages[messages.length - 1];
     CHATS[currentChat].preview = (last.from === currentUser?.name ? 'Bạn: ' : '') + (last.img ? '📷 Ảnh' : (last.recalled ? '🚫 Tin đã thu hồi' : last.text));
@@ -4176,6 +4371,7 @@ function deleteMessageLocal(msgIdx) {
   renderChats();
 }
 
+// Thu hồi tin nhắn — XÓA HOÀN TOÀN cả 2 phía khỏi Firebase
 async function recallMessage(msgIdx) {
   const msg = messages[msgIdx];
   if (!msg || !currentUser) return;
@@ -4183,6 +4379,7 @@ async function recallMessage(msgIdx) {
   const c = CHATS[currentChat];
   if (window.FB && window.FB.ready) {
     const chatKey = c.isGroup ? getGroupChatKey(c.clubName || c.name) : getChatKey(currentUser.name, c.name);
+    // Tìm key Firebase của tin nhắn này theo ts và xóa hẳn khỏi DB
     const allMsgs = await window.FB.get('vancanh/chats/' + chatKey + '/messages');
     if (allMsgs) {
       const fbKey = Object.keys(allMsgs).find(k => allMsgs[k].ts === msg.ts);
@@ -4191,8 +4388,10 @@ async function recallMessage(msgIdx) {
       }
     }
   }
+  // Xóa khỏi mảng local ngay lập tức
   messages.splice(msgIdx, 1);
   renderMessages();
+  // Cập nhật preview
   if (messages.length > 0) {
     const last = messages[messages.length - 1];
     CHATS[currentChat].preview = (last.from === currentUser.name ? 'Bạn: ' : '') + (last.img ? '📷 Ảnh' : last.text);
@@ -4203,20 +4402,25 @@ async function recallMessage(msgIdx) {
   showToast('↩️','Đã thu hồi tin nhắn (cả 2 phía)');
 }
 
+// Xóa toàn bộ đoạn chat — XÓA CẢ 2 PHÍA trên Firebase và xóa bong bóng chat
 async function deleteChatConversation() {
   if (!currentUser || currentChat < 0 || !CHATS[currentChat]) return;
   const c = CHATS[currentChat];
   if (!confirm('Xóa toàn bộ đoạn chat với ' + c.name + '?\n⚠️ Cả 2 người đều mất lịch sử chat!')) return;
+  // Dừng lắng nghe realtime trước khi xóa
   if (_chatUnlisten) { _chatUnlisten(); _chatUnlisten = null; }
   if (window.FB && window.FB.ready) {
     const chatKey = c.isGroup ? getGroupChatKey(c.clubName || c.name) : getChatKey(currentUser.name, c.name);
+    // Xóa toàn bộ messages trên Firebase — cả 2 phía đều mất
     await window.FB.remove('vancanh/chats/' + chatKey + '/messages');
   }
+  // Xóa bong bóng chat khỏi danh sách
   CHATS.splice(currentChat, 1);
   currentChat = CHATS.length > 0 ? 0 : -1;
   messages = [];
   renderMessages();
   renderChats();
+  // Reset vùng chat về trạng thái trống
   if (currentChat >= 0) {
     selectChat(0);
   } else {
@@ -4226,6 +4430,8 @@ async function deleteChatConversation() {
   showToast('🗑️','Đã xóa đoạn chat (cả 2 phía)');
 }
 
+
+// Xem ảnh full size
 function viewFullImg(src) {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
@@ -4234,6 +4440,8 @@ function viewFullImg(src) {
   document.body.appendChild(overlay);
 }
 
+// Emoji picker
+let pendingImgData = null;
 function toggleEmojiPopup() {
   const ep = document.getElementById('emoji-popup');
   const isHidden = ep.style.display === 'none' || !ep.style.display;
@@ -4256,7 +4464,7 @@ document.addEventListener('click', e => {
   if (ep && !ep.contains(e.target) && !e.target.closest('.btn-icon')) ep.style.display = 'none';
 });
 
-let pendingImgData = null;
+// Preview ảnh trước khi gửi
 function previewChatImg(input) {
   if (!input.files || !input.files[0]) return;
   const reader = new FileReader();
@@ -4290,16 +4498,19 @@ async function sendMsg() {
 
   const c = CHATS[currentChat];
   if (window.FB && window.FB.ready) {
+    // ✅ FIX: group chat dùng key riêng
     const chatKey = c.isGroup ? getGroupChatKey(c.clubName || c.name) : getChatKey(currentUser.name, c.name);
     await window.FB.push('vancanh/chats/' + chatKey + '/messages', msg);
     const preview = { lastMsg: msg.img ? '📷 Ảnh' : text, lastFrom: currentUser.name, lastFromDisplay: c.isGroup ? currentUser.name : 'Bạn', time };
     await window.FB.set('vancanh/chats/' + chatKey + '/meta', preview);
+    // Gửi thông báo — group chat thông báo cho tất cả thành viên CLB, chat 1-1 thông báo partner
     if (c.isGroup) {
+      // Lấy danh sách thành viên CLB rồi notify
       const safeClub = (c.clubName || c.name).replace(/[.#$[\]/]/g,'_');
       const members = await window.FB.get('vancanh/club_members/' + safeClub);
       if (members) {
         Object.keys(members).forEach(memberKey => {
-          if (memberKey === currentUser.name.replace(/[.#$[\]/]/g,'_')) return;
+          if (memberKey === currentUser.name.replace(/[.#$[\]/]/g,'_')) return; // bỏ qua bản thân
           window.FB.push('vancanh/notifications/' + memberKey, {
             type: 'msg', from: c.name, fromInitial: c.init,
             text: currentUser.name + ': ' + (msg.img ? '📷 Đã gửi một ảnh' : text),
@@ -4327,12 +4538,13 @@ async function sendMsg() {
   }
 }
 
+// Typing indicator
 let _typingTimeout = null;
 let _typingUnlisten = null;
 function onChatInputChange() {
   if (!currentUser || !window.FB || !window.FB.ready) return;
   const c = CHATS[currentChat];
-  if (c.isGroup) return;
+  if (c.isGroup) return; // ✅ Không cần typing indicator cho group chat
   const chatKey = getChatKey(currentUser.name, c.name);
   const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
   window.FB.set('vancanh/chats/' + chatKey + '/typing/' + safeSelf, { ts: Date.now() });
@@ -4384,6 +4596,7 @@ function listenPartnerOnline(partnerName) {
   });
   _onlineUnlistens.push(ul);
 }
+// Ping online mỗi 30s
 setInterval(() => { if (currentUser) setOnline(); }, 30000);
 
 // ─── NOTIFICATIONS ───
@@ -4399,6 +4612,7 @@ function listenNotifications() {
     notifications = Object.entries(val).map(([k, v]) => ({ ...v, key: k }))
       .sort((a, b) => b.ts - a.ts);
     updateNotifBadge();
+    // Nếu có thông báo mới (tin nhắn) và không đang ở trang chat → hiện toast
     const newest = notifications[0];
     if (newest && !newest.read && newest.type === 'msg' && currentPage !== 'chat') {
       showToast('💬', newest.from + ': ' + newest.text);
@@ -4489,14 +4703,15 @@ function toggleChatInfo() {
 // ─── WEBRTC CALL SYSTEM ───
 let _peerConn = null;
 let _localStream = null;
-let _callType = 'audio';
+let _callType = 'audio'; // 'audio' | 'video'
 let _callTarget = null;
 let _callKey = null;
 let _callSignalUnlisten = null;
 let _callDeclinedUnlisten = null;
 let _callRinging = null;
-const _handledNotifKeys = new Set();
+const _handledNotifKeys = new Set(); // chống trigger notif gọi cũ khi F5
 
+// Tạo PeerConnection với STUN servers
 function createPeerConnection() {
   const pc = new RTCPeerConnection({
     iceServers: [
@@ -4519,6 +4734,7 @@ function createPeerConnection() {
     const remoteVideo = document.getElementById('call-remote-video');
     if (remoteAudio && e.streams[0]) {
       remoteAudio.srcObject = e.streams[0];
+      // iOS Safari requires explicit .play() after srcObject is set
       remoteAudio.play().catch(() => {});
     }
     if (remoteVideo && e.streams[0] && _callType === 'video') {
@@ -4538,13 +4754,18 @@ function createPeerConnection() {
 }
 
 function _stopRinging() {
+  // ✅ FIX: dùng clearTimeout (không phải clearInterval)
   if (_callRinging) { clearTimeout(_callRinging); _callRinging = null; }
 }
 
+// Bắt đầu gọi
 async function callPartner(type) {
+  type = type || 'audio';
+  // ✅ FIX: lấy tên từ CHATS (đáng tin cậy hơn DOM text)
   const c = CHATS[currentChat];
   if (!c) return;
   if (c.isGroup) {
+    // Nếu bấm nhầm nút 1-1 khi đang ở group chat → chuyển sang gọi nhóm
     startGroupCall();
     return;
   }
@@ -4555,8 +4776,10 @@ async function callPartner(type) {
   _callTarget = name;
   _callKey = [currentUser.name, name].sort().join('__').replace(/[.#$[\]/\s]/g,'_');
 
+  // Xóa data cũ
   await window.FB.remove('vancanh/calls/' + _callKey);
 
+  // Lấy microphone (+ camera nếu video)
   try {
     _localStream = await navigator.mediaDevices.getUserMedia(
       type === 'video' ? { audio: true, video: true } : { audio: true, video: false }
@@ -4569,14 +4792,17 @@ async function callPartner(type) {
   _peerConn = createPeerConnection();
   _localStream.getTracks().forEach(t => _peerConn.addTrack(t, _localStream));
 
+  // Show local video nếu là video call
   const localVideo = document.getElementById('call-local-video');
-  if (localVideo && type === 'video') { localVideo.srcObject = _localStream; localVideo.style.display = 'block'; localVideo.muted = true; }
+  if (localVideo && type === 'video') { localVideo.srcObject = _localStream; localVideo.style.display = 'block'; }
 
   const offer = await _peerConn.createOffer();
   await _peerConn.setLocalDescription(offer);
 
+  // Gửi offer lên Firebase
   await window.FB.set('vancanh/calls/' + _callKey + '/offer', { sdp: offer.sdp, type: offer.type, from: currentUser.name, callType: type, ts: Date.now() });
 
+  // Thông báo cho người kia
   const safeTarget = name.replace(/[.#$[\]/]/g,'_');
   await window.FB.push('vancanh/notifications/' + safeTarget, {
     type: 'call_offer', from: currentUser.name, fromInitial: currentUser.initial,
@@ -4586,10 +4812,17 @@ async function callPartner(type) {
     ts: Date.now(), read: false
   });
 
+  // Hiện UI gọi (caller side)
   showCallUI('outgoing', name, type);
+
+  // Lắng nghe answer
   _listenForAnswer();
+
+  // Timeout 40s nếu không bắt máy
   _callRinging = setTimeout(() => { endCall(); showToast('📞', name + ' không bắt máy.'); }, 40000);
 }
+
+function videoCall() { callPartner('video'); }
 
 function _listenForAnswer() {
   if (!_callKey || !window.FB || !window.FB.ready) return;
@@ -4601,8 +4834,10 @@ function _listenForAnswer() {
         await _peerConn.setRemoteDescription(new RTCSessionDescription({ type: val.type, sdp: val.sdp }));
       } catch(e) {}
     }
+    // Lắng nghe ICE candidates từ bên kia
     _listenForCandidates(val.from);
   });
+  // ✅ FIX: Lắng nghe declined — báo ngay cho caller khi bị từ chối
   _callDeclinedUnlisten = window.FB.listen('vancanh/calls/' + _callKey + '/declined', val => {
     if (val) {
       _stopRinging();
@@ -4623,10 +4858,13 @@ function _listenForCandidates(fromName) {
   });
 }
 
+// Nhận cuộc gọi đến
 async function handleIncomingCall(notif) {
   if (!notif.callKey) return;
+  // Chống trigger lại khi F5 — mỗi notif key chỉ xử lý 1 lần
   if (_handledNotifKeys.has(notif.key)) return;
   _handledNotifKeys.add(notif.key);
+  // Kiểm tra offer còn trên Firebase không — nếu không thì cuộc gọi đã kết thúc
   if (window.FB && window.FB.ready) {
     const alive = await window.FB.get('vancanh/calls/' + notif.callKey + '/offer');
     if (!alive) return;
@@ -4634,12 +4872,16 @@ async function handleIncomingCall(notif) {
   _callKey = notif.callKey;
   _callTarget = notif.from;
   _callType = notif.callType || 'audio';
+  // Xóa notif này khỏi Firebase để không trigger lại
   if (currentUser && window.FB && window.FB.ready) {
     const s = currentUser.name.replace(/[.#$[\]/]/g,'_');
     window.FB.remove('vancanh/notifications/' + s + '/' + notif.key);
   }
+  // Mobile: show overlay trước, acceptCall() gọi getUserMedia khi user bấm
   showCallUI('incoming', notif.from, _callType);
 }
+
+// acceptCall is called via button onclick — that IS a user gesture, so getUserMedia works on mobile.
 
 async function acceptCall() {
   if (!_callKey || !currentUser) return;
@@ -4659,13 +4901,15 @@ async function acceptCall() {
   _localStream.getTracks().forEach(t => _peerConn.addTrack(t, _localStream));
 
   const localVideo = document.getElementById('call-local-video');
-  if (localVideo && _callType === 'video') { localVideo.srcObject = _localStream; localVideo.style.display = 'block'; localVideo.muted = true; }
+  if (localVideo && _callType === 'video') { localVideo.srcObject = _localStream; localVideo.style.display = 'block'; }
 
   await _peerConn.setRemoteDescription(new RTCSessionDescription({ type: offerData.type, sdp: offerData.sdp }));
   const answer = await _peerConn.createAnswer();
   await _peerConn.setLocalDescription(answer);
 
   await window.FB.set('vancanh/calls/' + _callKey + '/answer', { sdp: answer.sdp, type: answer.type, from: currentUser.name });
+
+  // Lắng nghe ICE từ caller
   _listenForCandidates(offerData.from);
 
   document.getElementById('call-status-text').textContent = 'Đang kết nối 🟡';
@@ -4684,6 +4928,7 @@ function endCall() {
   if (_peerConn) { try { _peerConn.close(); } catch(e) {} _peerConn = null; }
   if (_localStream) { _localStream.getTracks().forEach(t => t.stop()); _localStream = null; }
   if (_callSignalUnlisten) { _callSignalUnlisten(); _callSignalUnlisten = null; }
+  // ✅ FIX: dọn listener declined
   if (_callDeclinedUnlisten) { _callDeclinedUnlisten(); _callDeclinedUnlisten = null; }
   if (_callKey && window.FB && window.FB.ready) {
     window.FB.remove('vancanh/calls/' + _callKey);
@@ -4692,6 +4937,7 @@ function endCall() {
   closeCallUI();
 }
 
+// ✅ FIX: Dọn Firebase khi đóng tab đột ngột
 window.addEventListener('beforeunload', () => {
   if (_callKey && window.FB && window.FB.ready) {
     window.FB.remove('vancanh/calls/' + _callKey);
@@ -4704,6 +4950,7 @@ function toggleMute() {
   if (audioTrack) {
     audioTrack.enabled = !audioTrack.enabled;
     const btn = document.getElementById('call-btn-mute');
+    // ✅ FIX: chỉ đổi icon, không hiện text (tránh tràn button tròn)
     if (btn) btn.textContent = audioTrack.enabled ? '🎙️' : '🔇';
   }
 }
@@ -4729,16 +4976,19 @@ function showCallUI(direction, partnerName, type) {
   const isIncoming = direction === 'incoming';
   overlay.innerHTML = `
     <div id="call-box" style="position:fixed;inset:0;z-index:9999;background:${isVideo?'rgba(0,0,0,0.95)':'linear-gradient(135deg,#1a1e2a,#0a0c10)'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+      <!-- Video elements -->
       <video id="call-remote-video" autoplay playsinline style="display:none;width:100%;max-width:600px;border-radius:16px;background:#000"></video>
       <audio id="call-remote-audio" autoplay playsinline></audio>
       <video id="call-local-video" autoplay muted playsinline style="display:none;position:fixed;top:20px;right:20px;width:140px;border-radius:12px;border:2px solid rgba(255,255,255,0.2)"></video>
 
+      <!-- Avatar & name -->
       <div style="text-align:center">
         <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;box-shadow:0 0 40px rgba(91,108,255,0.4);animation:callPulse 1.5s ease-in-out infinite">${partnerName.charAt(0).toUpperCase()}</div>
         <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px">${partnerName}</div>
         <div id="call-status-text" style="font-size:14px;color:rgba(255,255,255,0.6)">${isIncoming ? (isVideo?'📹 Cuộc gọi video đến...':'📞 Cuộc gọi thoại đến...') : '⏳ Đang gọi...'}</div>
       </div>
 
+      <!-- Buttons -->
       <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
         ${isIncoming ? `<button id="call-btn-accept" onclick="acceptCall()" style="width:70px;height:70px;border-radius:50%;background:#22c55e;border:none;font-size:28px;cursor:pointer;box-shadow:0 6px 20px rgba(34,197,94,0.5);transition:transform 0.15s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">📞</button>` : ''}
         <button id="call-btn-mute" onclick="toggleMute()" style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:24px;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'" title="Tắt/Bật tiếng">🎙️</button>
@@ -4757,6 +5007,7 @@ function closeCallUI() {
 
 // ─── GROUP CALL INCOMING BANNER ──────────────────────────────────────
 function showGroupCallBanner(notif) {
+  // Xóa banner cũ
   const old = document.getElementById('group-call-banner');
   if (old) old.remove();
 
@@ -4793,6 +5044,7 @@ function showGroupCallBanner(notif) {
     </div>
   `;
   document.body.appendChild(banner);
+  // Tự động ẩn sau 30 giây
   setTimeout(() => { if (banner.parentNode) banner.remove(); }, 30000);
 }
 
@@ -4801,6 +5053,7 @@ let _jitsiApi = null;
 let _jitsiOverlay = null;
 
 function getJitsiRoomName(clubName) {
+  // Tạo tên phòng cố định, an toàn, từ tên CLB
   return 'vancanh-' + (clubName || 'group').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase().replace(/-+/g,'-');
 }
 
@@ -4811,6 +5064,7 @@ async function startGroupCall() {
 
   const roomName = getJitsiRoomName(c.clubName || c.name);
 
+  // Thông báo cho tất cả thành viên CLB có cuộc gọi nhóm đang diễn ra
   if (window.FB && window.FB.ready) {
     const safeClub = (c.clubName || c.name).replace(/[.#$[\]/]/g,'_');
     const members = await window.FB.get('vancanh/club_members/' + safeClub);
@@ -4829,6 +5083,7 @@ async function startGroupCall() {
         });
       });
     }
+    // Lưu trạng thái phòng lên Firebase để thành viên có thể join sau
     const safeRoom = roomName.replace(/[.#$[\]/]/g,'-');
     window.FB.set('vancanh/group_calls/' + safeRoom, {
       clubName: c.clubName || c.name,
@@ -4847,6 +5102,7 @@ function joinGroupCall(roomName, clubName, clubEmoji) {
 }
 
 function showJitsiOverlay(roomName, clubName, clubEmoji) {
+  // Xoá overlay cũ nếu có
   closeJitsiOverlay();
 
   const overlay = document.createElement('div');
@@ -4858,6 +5114,7 @@ function showJitsiOverlay(roomName, clubName, clubEmoji) {
     font-family:var(--font);
   `;
   overlay.innerHTML = `
+    <!-- Header -->
     <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0">
       <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#5b6cff,#ff5c8a);display:flex;align-items:center;justify-content:center;font-size:20px">${clubEmoji}</div>
       <div style="flex:1">
@@ -4866,6 +5123,7 @@ function showJitsiOverlay(roomName, clubName, clubEmoji) {
       </div>
       <button onclick="closeJitsiOverlay()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:10px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;font-family:var(--font);transition:background 0.2s" onmouseover="this.style.background='rgba(239,68,68,0.3)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">📵 Thoát</button>
     </div>
+    <!-- Jitsi iframe -->
     <iframe
       id="jitsi-frame"
       src="https://meet.jit.si/${roomName}#config.prejoinPageEnabled=false&config.startWithAudioMuted=false&config.startWithVideoMuted=true&userInfo.displayName=${encodeURIComponent(currentUser ? currentUser.name : 'Khách')}&interfaceConfig.SHOW_JITSI_WATERMARK=false&interfaceConfig.SHOW_WATERMARK_FOR_GUESTS=false&interfaceConfig.TOOLBAR_BUTTONS=[%22microphone%22,%22camera%22,%22desktop%22,%22hangup%22,%22chat%22,%22participants-pane%22]"
@@ -4881,6 +5139,7 @@ function showJitsiOverlay(roomName, clubName, clubEmoji) {
 
 function closeJitsiOverlay() {
   if (_jitsiOverlay) {
+    // Đánh dấu phòng inactive trên Firebase khi người tạo thoát
     const iframe = _jitsiOverlay.querySelector('#jitsi-frame');
     if (iframe && window.FB && window.FB.ready) {
       try {
@@ -4907,12 +5166,14 @@ const GROUP_GRADIENTS = [
 const MINI_AV_COLORS = ['#5b6cff','#ff5c8a','#34d399','#fbbf24','#f472b6','#60a5fa'];
 
 async function renderGroups() {
+  // Tải số thành viên thực từ Firebase
   let leaderMap = {};
   if (window.FB && window.FB.ready) {
     for (let i = 0; i < groups.length; i++) {
       const safeClub = groups[i].name.replace(/[.#$[\]/]/g,'_');
       const count = await window.FB.get('vancanh/club_member_count/' + safeClub);
       if (count !== null) groups[i].members = count;
+      // Lấy chủ CLB
       const members = await window.FB.get('vancanh/club_members/' + safeClub);
       if (members) {
         const leader = Object.values(members).find(m => m.role === 'Chủ CLB');
@@ -4926,6 +5187,7 @@ async function renderGroups() {
 
   let html = '';
 
+  // CLB đã tham gia
   if (joined.length > 0) {
     html += `<div class="groups-joined-section" style="grid-column:1/-1">
       <div class="groups-section-label">✅ CLB của tôi (${joined.length})</div>
@@ -4935,6 +5197,7 @@ async function renderGroups() {
     </div>`;
   }
 
+  // CLB chưa tham gia
   html += `<div style="grid-column:1/-1">
     <div class="groups-section-label">🔍 Khám phá câu lạc bộ</div>
   </div>`;
@@ -5015,8 +5278,10 @@ function joinGroup(idx, e) {
   if (window.FB && window.FB.ready) {
     window.FB.get('vancanh/club_members/' + safeClub).then(async members => {
       const hasLeader = members && Object.values(members).some(m => m.role === 'Chủ CLB');
+      // Lấy vai trò trong CLB này (không phải global role)
       const myClubRole = currentUser.clubRoles && currentUser.clubRoles[g.name];
       if (hasLeader && myClubRole !== 'Chủ CLB') {
+        // Gửi yêu cầu tham gia chờ duyệt
         await window.FB.set('vancanh/club_join_requests/' + safeClub + '/' + safeName, {
           name: currentUser.name, initial: currentUser.initial,
           color: 'linear-gradient(135deg,#5b6cff,#7b8aff)',
@@ -5026,6 +5291,7 @@ function joinGroup(idx, e) {
         renderGroups();
         showToast('⏳', 'Đã gửi yêu cầu tham gia ' + g.name + '. Chờ Chủ CLB duyệt!');
       } else {
+        // Tự động vào
         g.joined = true;
         const memberData = {
           name: currentUser.name, initial: currentUser.initial,
@@ -5037,11 +5303,8 @@ function joinGroup(idx, e) {
         await window.FB.set('vancanh/club_member_count/' + safeClub, count);
         g.members = count;
         if (currentUser) lsSet(LS_GROUPS + '_' + currentUser.name, groups);
-        await window.FB.set('vancanh/joined_groups/' + safeName, groups);
         renderGroups();
-        ensureClubGroupChat(g.name, g.emoji);
-        showToast('🎉','Đã tham gia ' + g.name + '! Đã thêm vào nhóm chat 💬');
-        awardXP(15,'🏛️ Tham gia CLB');
+        showToast('🎉', 'Đã tham gia ' + g.name + '!');
       }
     });
   } else {
@@ -5049,8 +5312,7 @@ function joinGroup(idx, e) {
     g.members++;
     if (currentUser) lsSet(LS_GROUPS + '_' + currentUser.name, groups);
     renderGroups();
-    ensureClubGroupChat(g.name, g.emoji);
-    showToast('🎉','Đã tham gia ' + g.name + '!');
+    showToast('🎉', 'Đã tham gia ' + g.name + '!');
   }
 }
 
@@ -5094,6 +5356,7 @@ function createGroup() {
   const newGroup = { name, desc: desc || 'Câu lạc bộ mới tạo bởi ' + currentUser.name, emoji: selectedEmoji, members: 1, joined: true, color: 'rgba(91,108,255,0.12)' };
   groups.unshift(newGroup);
   if (currentUser) lsSet(LS_GROUPS + '_' + currentUser.name, groups);
+  // Đăng ký người tạo là Chủ CLB trên Firebase
   if (window.FB && window.FB.ready && currentUser) {
     const safeClub = name.replace(/[.#$[\]/]/g,'_');
     const safeName = currentUser.name.replace(/[.#$[\]/]/g,'_');
@@ -5124,10 +5387,12 @@ function switchFriendTab(tab) {
   if (tab === 'friends') renderMyFriends();
 }
 
+// Gửi lời mời kết bạn lên Firebase
 async function addFriend(name, initial, color, club) {
   if (!currentUser) return;
   const safeSender = currentUser.name.replace(/[.#$[\]/]/g,'_');
   const safeTarget = name.replace(/[.#$[\]/]/g,'_');
+  // Ghi lời mời vào hộp thư của người nhận
   const reqData = {
     from: currentUser.name,
     fromInitial: currentUser.initial,
@@ -5137,6 +5402,7 @@ async function addFriend(name, initial, color, club) {
   };
   if (window.FB && window.FB.ready) {
     await window.FB.set('vancanh/friend_inbox/' + safeTarget + '/' + safeSender, reqData);
+    // Gửi thông báo cho người kia
     await window.FB.push('vancanh/notifications/' + safeTarget, {
       type: 'friend_req', from: currentUser.name, fromInitial: currentUser.initial,
       text: 'Muốn kết bạn với bạn 👥', time: new Date().getHours()+':'+String(new Date().getMinutes()).padStart(2,'0'),
@@ -5149,15 +5415,18 @@ async function addFriend(name, initial, color, club) {
   showToast('👥', 'Đã gửi lời mời kết bạn đến ' + name + '!');
 }
 
+// Chấp nhận lời mời kết bạn
 async function acceptFriendRequest(fromName, fromInitial, fromColor, fromClub) {
   if (!currentUser) return;
   const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
   const safeFrom = fromName.replace(/[.#$[\]/]/g,'_');
 
+  // Thêm bạn cho cả 2 bên trên Firebase
   if (window.FB && window.FB.ready) {
     const t = Date.now();
     await window.FB.set('vancanh/friends_list/' + safeSelf + '/' + safeFrom, { name: fromName, initial: fromInitial || fromName.charAt(0).toUpperCase(), color: fromColor || 'linear-gradient(135deg,#5b6cff,#7b8aff)', club: fromClub || '', time: t });
     await window.FB.set('vancanh/friends_list/' + safeFrom + '/' + safeSelf, { name: currentUser.name, initial: currentUser.initial, color: 'linear-gradient(135deg,#5b6cff,#7b8aff)', club: currentUser.club || '', time: t });
+    // Xóa lời mời khỏi inbox
     await window.FB.remove('vancanh/friend_inbox/' + safeSelf + '/' + safeFrom);
   }
   friends.add(fromName);
@@ -5169,6 +5438,7 @@ async function acceptFriendRequest(fromName, fromInitial, fromColor, fromClub) {
   showToast('🎉', 'Đã chấp nhận lời mời từ ' + fromName + '!');
 }
 
+// Từ chối lời mời
 async function declineFriendRequest(fromName) {
   if (!currentUser) return;
   const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
@@ -5181,6 +5451,7 @@ async function declineFriendRequest(fromName) {
   showToast('❌', 'Đã từ chối lời mời từ ' + fromName);
 }
 
+// Lắng nghe inbox realtime
 function listenInbox() {
   if (!currentUser || !window.FB || !window.FB.ready) return;
   if (_inboxUnlisten) _inboxUnlisten();
@@ -5192,26 +5463,32 @@ function listenInbox() {
   });
 }
 
+// Lắng nghe tất cả cuộc chat của user (để nhận tin nhắn mới realtime dù đang ở trang khác)
 let _allChatsUnlistens = [];
 function listenAllChats() {
   _allChatsUnlistens.forEach(f => f());
   _allChatsUnlistens = [];
   if (!currentUser || !window.FB || !window.FB.ready) return;
+  // Lắng nghe từng chat với mỗi bạn bè
   [...friends].forEach(friendName => {
     const chatKey = getChatKey(currentUser.name, friendName);
     const ul = window.FB.listen('vancanh/chats/' + chatKey + '/meta', val => {
       if (!val) return;
+      // Tìm chat trong CHATS list và cập nhật preview
       const idx = CHATS.findIndex(c => c.name === friendName);
       if (idx !== -1) {
         const isMe = val.lastFrom === currentUser.name;
         CHATS[idx].preview = (isMe ? 'Bạn: ' : '') + val.lastMsg;
         CHATS[idx].time = val.time || 'Vừa xong';
+        // Nếu tin nhắn từ người kia và mình không đang chat với họ → đánh dấu unread
         if (!isMe && !(currentPage === 'chat' && CHATS[currentChat] && CHATS[currentChat].name === friendName)) {
           CHATS[idx].unread = true;
+          // Đẩy lên đầu danh sách
           const chat = CHATS.splice(idx, 1)[0];
           CHATS.unshift(chat);
         }
         renderChats();
+        // Cập nhật badge tin nhắn chưa đọc
         const unreadCount = CHATS.filter(c => c.unread).length;
         updateChatUnreadBadge(unreadCount);
       }
@@ -5220,6 +5497,7 @@ function listenAllChats() {
   });
 }
 
+// Lắng nghe danh sách bạn bè realtime — khi có bạn mới → thêm vào CHATS và bắt đầu lắng nghe chat
 function listenFriendsList() {
   if (!currentUser || !window.FB || !window.FB.ready) return;
   if (_friendsUnlisten) _friendsUnlisten();
@@ -5232,6 +5510,7 @@ function listenFriendsList() {
           friends.add(f.name);
           addFriendToChat(f.name, f.initial, f.color, f.club);
           newFriendAdded = true;
+          // Bắt đầu lắng nghe chat với bạn mới
           const chatKey = getChatKey(currentUser.name, f.name);
           const ul = window.FB.listen('vancanh/chats/' + chatKey + '/meta', val2 => {
             if (!val2) return;
@@ -5263,6 +5542,7 @@ function updateFriendReqBadge(count) {
   const badge = document.getElementById('friend-req-badge');
   const ibadge = document.getElementById('inbox-count-badge');
   if (count === undefined) {
+    // Tính lại từ Firebase
     if (window.FB && window.FB.ready && currentUser) {
       const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
       window.FB.get('vancanh/friend_inbox/' + safeSelf).then(val => {
@@ -5315,6 +5595,7 @@ async function renderMyFriends() {
     const val = await window.FB.get('vancanh/friends_list/' + safeSelf);
     if (val) friendData = Object.values(val);
   } else {
+    // Offline fallback
     friendData = [...friends].map(n => ({ name: n, initial: n.charAt(0).toUpperCase(), color: 'linear-gradient(135deg,#5b6cff,#7b8aff)', club: '' }));
   }
   if (friendData.length === 0) {
@@ -5333,7 +5614,7 @@ async function renderMyFriends() {
 
 function renderFriends() {
   const searchVal = (document.getElementById('friend-search') ? document.getElementById('friend-search').value : '').toLowerCase();
-  const allUsers = [];
+  const allUsers = [...SAMPLE_USERS];
   getUsers().forEach(u => {
     if (!allUsers.find(x => x.name === u.name)) {
       allUsers.push({ name: u.name, club: u.club || 'Thành viên', initial: u.name.charAt(0).toUpperCase(), color: 'linear-gradient(135deg,#5b6cff,#7b8aff)', status: 'Đang hoạt động' });
@@ -5386,6 +5667,7 @@ function openChatWithFriend(name, initial, color) {
 async function cancelRequest(name) {
   friendRequests.delete(name);
   lsSet(LS_FRIEND_REQS + '_' + currentUser.name, [...friendRequests]);
+  // Xóa khỏi inbox của người kia
   if (window.FB && window.FB.ready && currentUser) {
     const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
     const safeTarget = name.replace(/[.#$[\]/]/g,'_');
@@ -5410,7 +5692,10 @@ async function unfriend(name) {
 function openCommentModal(postId) {
   currentCommentPostId = postId;
   if (!COMMENTS_DB[postId]) {
-    COMMENTS_DB[postId] = [];
+    COMMENTS_DB[postId] = [
+      { author: 'Minh Khoa', text: 'Hay quá! Mình sẽ tham gia nhé 😄', time: '2 giờ trước', color: 'linear-gradient(135deg,#43E97B,#38F9D7)', initial: 'M' },
+      { author: 'Hà Phương', text: 'Chụp ảnh sự kiện nhé mọi người!', time: '1 giờ trước', color: 'linear-gradient(135deg,#F7971E,#FFD200)', initial: 'H' }
+    ];
     lsSet(LS_COMMENTS, COMMENTS_DB);
   }
   renderComments(postId);
@@ -5439,10 +5724,13 @@ function submitComment() {
     color: 'linear-gradient(135deg,#5b6cff,#7b8aff)', initial: currentUser.initial
   });
   lsSet(LS_COMMENTS, COMMENTS_DB);
+  // ✅ FIX: dùng posts đang có trong RAM (có imageData), không đọc lại từ localStorage
   const post = posts.find(p => p.id === currentCommentPostId);
   if (post) { post.comments++; lsSet(LS_POSTS, posts.map(p => { const {imageData,...r}=p; return {...r, imageData:null}; })); }
+  // Đồng bộ lên Firebase — GIỮ imageData
   if (window.FB && window.FB.ready) {
     window.FB.set('vancanh/comments', COMMENTS_DB);
+    // ✅ FIX: chỉ lưu metadata posts (không imageData) — ảnh đã tách riêng
     window.FB.set('vancanh/posts', posts.map(p => { const{imageData:_d,...r}=p; return r; }));
   }
   input.value = '';
@@ -5457,6 +5745,7 @@ function closeCommentModal() {
 
 // ─── TOAST ───
 function showToast(icon, msg) {
+  
   const t = document.getElementById('toast');
   const ti = document.getElementById('toast-icon');
   const tm = document.getElementById('toast-msg');
@@ -5473,43 +5762,572 @@ function showToast(icon, msg) {
 // ══════════════════════════════════════════════
 
 // ─── 1. TIN TỨC & SỰ KIỆN ───
-let newsFilter = 'all';
-let _newsData_dynamic = [];
 
+const NEWS_DATA = [
+  { id:1, type:'event', emoji:'🏆', bg:'linear-gradient(135deg,rgba(251,191,36,0.2),rgba(245,158,11,0.1))',
+    title:'Hội thi Khoa học Kỹ thuật cấp trường', 
+    desc:'Cuộc thi tìm kiếm những tài năng STEM xuất sắc nhất của trường THPT Vân Canh năm học 2024–2025.',
+    date:'28/03/2025', club:'CLB Lập trình', author:'Ban Tổ chức',
+    body:'Hội thi Khoa học Kỹ thuật cấp trường là sự kiện thường niên nhằm tạo sân chơi sáng tạo cho học sinh. Các đội tham dự sẽ trình bày dự án nghiên cứu trong 20 phút trước hội đồng giám khảo gồm các giáo viên và chuyên gia. Giải nhất được cử tham dự vòng cấp tỉnh. <br><br>📌 Thể lệ: Mỗi đội 2–3 thành viên, đăng ký qua Google Form trước 25/03. Nộp bản tóm tắt đề tài tối đa 2 trang A4.',
+    gcal: true, startDate:'2025-03-28', location:'Hội trường A, THPT Vân Canh' },
+  { id:2, type:'achievement', emoji:'🥇', bg:'linear-gradient(135deg,rgba(52,211,153,0.2),rgba(5,150,105,0.1))',
+    title:'CLB Lập trình đạt giải Nhì Olympic Tin học tỉnh',
+    desc:'Đội tuyển gồm 3 thành viên xuất sắc vượt qua hơn 120 thí sinh toàn tỉnh để giành giải Nhì ấn tượng.',
+    date:'15/03/2025', club:'CLB Lập trình', author:'Thầy Giáo viên Chủ nhiệm',
+    body:'Đây là thành tích cao nhất mà CLB Lập trình THPT Vân Canh đạt được trong 3 năm liên tiếp. Đội tuyển gồm Nguyễn Hoàng Anh, Trần Thị Bình và Minh Khoa đã xuất sắc vượt qua vòng loại cấp huyện và toàn thắng tại vòng chung kết cấp tỉnh.<br><br>🎊 Nhà trường khen thưởng mỗi thành viên 500.000đ và trao bằng khen Học sinh Giỏi cấp tỉnh. CLB sẽ nhận được tài trợ thêm thiết bị máy tính mới.',
+    gcal: false },
+  { id:3, type:'activity', emoji:'🎵', bg:'linear-gradient(135deg,rgba(255,92,138,0.2),rgba(236,72,153,0.08))',
+    title:'Đêm nhạc "Giai điệu tuổi học trò" lần 5',
+    desc:'Chương trình văn nghệ thường niên do CLB Âm nhạc tổ chức với sự tham gia của hơn 200 học sinh.',
+    date:'05/04/2025', club:'CLB Âm nhạc', author:'CLB Âm nhạc',
+    body:'Đêm nhạc năm nay có chủ đề "Giai điệu tuổi học trò" với các tiết mục phong phú: band acoustic, múa đương đại, ngâm thơ và biểu diễn nhạc cụ dân tộc. Toàn bộ 12 tiết mục được tập luyện trong 2 tháng.<br><br>🎫 Vé miễn phí cho học sinh THPT Vân Canh. Đăng ký qua nhóm Zalo CLB Âm nhạc trước 01/04. Người ngoài trường: 20.000đ/vé.',
+    gcal: true, startDate:'2025-04-05', location:'Sân khấu chính, THPT Vân Canh' },
+  { id:4, type:'activity', emoji:'📷', bg:'linear-gradient(135deg,rgba(91,108,255,0.2),rgba(99,102,241,0.08))',
+    title:'Workshop nhiếp ảnh "Ánh sáng và cảm xúc"',
+    desc:'Buổi tập huấn thực hành nhiếp ảnh với máy ảnh DSLR và smartphone dành cho mọi trình độ.',
+    date:'01/04/2025', club:'CLB Nhiếp ảnh', author:'CLB Nhiếp ảnh',
+    body:'Workshop được chia làm 2 phần: lý thuyết về nguyên tắc ánh sáng, bố cục, khoảnh khắc; và thực hành ngoài trời tại khuôn viên trường. Học viên sẽ được hướng dẫn bởi nhiếp ảnh gia Lê Minh Trí (thành viên Hội Nhiếp ảnh tỉnh).<br><br>📋 Mang theo: máy ảnh hoặc điện thoại có camera tốt, áo thoải mái. Giới hạn 30 học viên. Đăng ký ngay!',
+    gcal: true, startDate:'2025-04-01', location:'Phòng đa năng + khuôn viên trường' },
+  { id:5, type:'event', emoji:'⚽', bg:'linear-gradient(135deg,rgba(52,211,153,0.15),rgba(16,185,129,0.08))',
+    title:'Giải bóng đá mini liên CLB lần 3',
+    desc:'Giải đấu thân thiện quy tụ 8 đội đến từ các câu lạc bộ trong trường, tranh cúp vô địch.',
+    date:'12/04/2025', club:'CLB Thể thao', author:'CLB Thể thao',
+    body:'Giải bóng đá mini liên CLB được tổ chức theo thể thức vòng tròn, 8 đội chia 2 bảng. Mỗi đội 6 người (5 + thủ môn). Trận chung kết diễn ra vào chiều 12/04.<br><br>⚽ Địa điểm: Sân trường THPT Vân Canh. Đăng ký đội qua Ban TDTT trước 08/04. Giải thưởng: Cúp + 1.000.000đ cho đội vô địch.',
+    gcal: true, startDate:'2025-04-12', location:'Sân bóng THPT Vân Canh' },
+  { id:6, type:'achievement', emoji:'📚', bg:'linear-gradient(135deg,rgba(251,191,36,0.15),rgba(245,158,11,0.06))',
+    title:'CLB Tiếng Anh đạt chứng chỉ quốc tế IELTS 6.5+',
+    desc:'10 thành viên CLB Tiếng Anh đạt band IELTS từ 6.5 trở lên trong kỳ thi tháng 3/2025.',
+    date:'10/03/2025', club:'CLB Tiếng Anh', author:'CLB Tiếng Anh',
+    body:'Đây là kết quả của hơn 6 tháng luyện tập chăm chỉ với phương pháp học kết hợp: luyện 4 kỹ năng theo tài liệu Cambridge, mock test hàng tuần, và giao lưu với bạn bè quốc tế qua Zoom.<br><br>🌟 Điểm nổi bật: 3 bạn đạt 7.0+, trong đó Hà Phương đạt 7.5 — kết quả cao nhất lịch sử CLB!',
+    gcal: false },
+];
+
+let newsFilter = 'all';
 function filterNews(type, btn) {
   newsFilter = type;
   document.querySelectorAll('.news-filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderNews();
 }
+// (original renderNews is overridden by v17 renderNews above — kept for reference)
+function _legacy_renderNews_unused() {
+  // replaced
+}
+// openNewsDetail → delegate sang openNewsDetail_v2 (hỗ trợ cả tin tĩnh & tin động)
+function openNewsDetail(id) { openNewsDetail_v2(id); }
+function closeNewsDetail() {
+  document.getElementById('news-detail-overlay').classList.remove('open');
+}
 
-function renderNews() {
-  const grid = document.getElementById('news-grid');
+// ─── 2. THƯ VIỆN ẢNH ───
+
+const GALLERY_DEFAULT = [
+  { id:1, emoji:'💻', label:'Hackathon 24h – CLB Lập trình', club:'CLB Lập trình', time:'20/03/2025', author:'Admin', isEmoji:true },
+  { id:2, emoji:'🎵', label:'Đêm nhạc Acoustic mùa xuân', club:'CLB Âm nhạc', time:'15/03/2025', author:'Ban Văn nghệ', isEmoji:true },
+  { id:3, emoji:'⚽', label:'Chung kết giải bóng đá mini', club:'CLB Thể thao', time:'10/03/2025', author:'CLB Thể thao', isEmoji:true },
+  { id:4, emoji:'📷', label:'Buổi dã ngoại chụp ảnh hoàng hôn', club:'CLB Nhiếp ảnh', time:'05/03/2025', author:'CLB Nhiếp ảnh', isEmoji:true },
+  { id:5, emoji:'🌍', label:'Giao lưu văn hoá quốc tế – English Day', club:'CLB Tiếng Anh', time:'01/03/2025', author:'CLB Tiếng Anh', isEmoji:true },
+  { id:6, emoji:'🤖', label:'Demo sản phẩm AI của học sinh', club:'CLB Lập trình', time:'25/02/2025', author:'Thành viên', isEmoji:true },
+  { id:7, emoji:'🎭', label:'Tiểu phẩm sân khấu kịch cuối kỳ', club:'CLB Âm nhạc', time:'20/02/2025', author:'Đội kịch', isEmoji:true },
+  { id:8, emoji:'🏃', label:'Buổi tập thể lực định kỳ thứ 7', club:'CLB Thể thao', time:'15/02/2025', author:'CLB Thể thao', isEmoji:true },
+  { id:9, emoji:'🌸', label:'Ảnh kỷ yếu mùa xuân 2025', club:'CLB Nhiếp ảnh', time:'10/02/2025', author:'CLB Nhiếp ảnh', isEmoji:true },
+];
+const GALLERY_BG = [
+  'linear-gradient(135deg,rgba(91,108,255,0.18),rgba(99,102,241,0.08))',
+  'linear-gradient(135deg,rgba(255,92,138,0.15),rgba(236,72,153,0.06))',
+  'linear-gradient(135deg,rgba(52,211,153,0.15),rgba(16,185,129,0.06))',
+  'linear-gradient(135deg,rgba(251,191,36,0.18),rgba(245,158,11,0.06))',
+  'linear-gradient(135deg,rgba(167,139,250,0.15),rgba(139,92,246,0.06))',
+];
+
+let galleryFilter = 'all';
+let galleryItems = [];
+// Load gallery từ localStorage, merge với mặc định để luôn có ảnh kể cả khi mới
+(function initGallery() {
+  const saved = lsGet(LS_GALLERY, null);
+  if (saved && Array.isArray(saved) && saved.length > 0) {
+    const savedIds = new Set(saved.map(i => i.id));
+    const merged = [...saved];
+    GALLERY_DEFAULT.forEach(d => { if (!savedIds.has(d.id)) merged.push(d); });
+    galleryItems = merged;
+  } else {
+    galleryItems = [...GALLERY_DEFAULT];
+  }
+})();
+
+// ✅ Tải gallery từ Firebase, merge với localStorage và mặc định
+async function loadGalleryFromFirebase() {
+  if (window.FB && window.FB.ready) {
+    const fbGallery = await window.FB.get('vancanh/gallery');
+    if (fbGallery) {
+      const fbItems = Object.values(fbGallery);
+      const merged = [...galleryItems];
+      fbItems.forEach(item => {
+        if (!merged.some(i => i.id === item.id)) merged.unshift(item);
+      });
+      // Sắp xếp mới nhất lên trước (id lớn hơn = mới hơn)
+      merged.sort((a, b) => b.id - a.id);
+      galleryItems = merged;
+      lsSet(LS_GALLERY, galleryItems);
+    }
+  }
+  renderGallery();
+}
+
+function filterGallery(club, btn) {
+  galleryFilter = club;
+  document.querySelectorAll('.gallery-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGallery();
+}
+function renderGallery() {
+  const grid = document.getElementById('gallery-grid');
   if (!grid) return;
-  const combined = [..._newsData_dynamic];
-  const filtered = newsFilter === 'all' ? combined : combined.filter(n => n.type === newsFilter);
-  const tagColors = { event:'rgba(91,108,255,0.15);color:var(--accent-light)', achievement:'rgba(251,191,36,0.15);color:var(--accent4)', activity:'rgba(52,211,153,0.12);color:var(--accent3)' };
-  const tagLabels = { event:'📅 Sự kiện', achievement:'🏆 Thành tích', activity:'🎯 Hoạt động' };
-  grid.innerHTML = filtered.map(n => `
-    <div class="news-card" onclick="openNewsDetail_v2(${n.id})">
-      <div class="news-card-banner" style="background:${n.bg}">${n.emoji}</div>
-      <div class="news-card-body">
-        <span class="news-tag" style="background:${tagColors[n.type]}">${tagLabels[n.type]||'📋'}</span>
-        <div class="news-card-title">${n.title}</div>
-        <div class="news-card-desc">${n.desc}</div>
-        <div class="news-card-meta"><span>📅 ${n.date}</span><span>•</span><span>${n.club}</span></div>
+  const filtered = galleryFilter === 'all' ? galleryItems : galleryItems.filter(i => i.club === galleryFilter);
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Chưa có ảnh nào</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map((item, idx) => {
+    const canDelete = currentUser && (currentUser.name === item.author || currentUser.role === 'admin');
+    const imgSrc = item.imageUrl || item.dataUrl;
+    return `
+    <div class="gallery-item" style="background:${GALLERY_BG[idx % GALLERY_BG.length]}" onclick="openLightbox(${item.id})">
+      ${imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:16px">` : `<span style="font-size:52px">${item.emoji}</span>`}
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-label">${item.label}<br><span style="opacity:0.7;font-size:11px">${item.club}</span></div>
       </div>
-    </div>`).join('');
-  if (currentUser) {
-    checkNewsAddPermission().then(ok => {
-      const btn = document.getElementById('news-add-btn');
-      if (btn) btn.style.display = ok ? '' : 'none';
+      ${canDelete ? `<button class="gallery-delete-btn" onclick="event.stopPropagation();deleteGalleryPhoto(${item.id})" title="Xóa ảnh">🗑️</button>` : ''}
+    </div>`;
+  }).join('');
+}
+function openLightbox(id) {
+  const item = galleryItems.find(i => i.id === id);
+  if (!item) return;
+  const lb = document.getElementById('gallery-lightbox');
+  if (!lb) return;
+  document.getElementById('lb-content').innerHTML = (item.imageUrl || item.dataUrl)
+    ? `<img class="gallery-lightbox-img" src="${item.imageUrl || item.dataUrl}" alt="${item.label}">`
+    : `<div class="gallery-lightbox-emoji">${item.emoji}</div>`;
+  document.getElementById('lb-caption').textContent = item.label + ' · ' + item.club + ' · ' + item.time;
+  // Hiện/ẩn nút xóa trong lightbox tuỳ quyền
+  const canDelete = currentUser && (currentUser.name === item.author || currentUser.role === 'admin');
+  const delBtn = document.getElementById('lb-delete-btn');
+  if (delBtn) {
+    delBtn.style.display = canDelete ? 'inline-flex' : 'none';
+    delBtn.onclick = () => { closeLightbox(); deleteGalleryPhoto(id); };
+  }
+  lb.classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('gallery-lightbox').classList.remove('open');
+}
+
+function deleteGalleryPhoto(id) {
+  const item = galleryItems.find(i => i.id === id);
+  if (!item) return;
+  const canDelete = currentUser && (currentUser.name === item.author || currentUser.role === 'admin');
+  if (!canDelete) { showToast('⚠️', 'Bạn không có quyền xóa ảnh này!'); return; }
+  if (!confirm('Xóa ảnh "' + item.label + '" khỏi thư viện?')) return;
+  galleryItems = galleryItems.filter(i => i.id !== id);
+  lsSet(LS_GALLERY, galleryItems);
+  // Xóa trên Firebase
+  if (window.FB && window.FB.ready) {
+    window.FB.get('vancanh/gallery').then(fb => {
+      if (!fb) return;
+      const key = Object.keys(fb).find(k => fb[k].id === id);
+      if (key) window.FB.remove('vancanh/gallery/' + key);
     });
+  }
+  renderGallery();
+  showToast('🗑️', 'Đã xóa ảnh khỏi thư viện!');
+}
+function uploadGalleryPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    // ✅ Nén ảnh xuống ~40KB trước khi lưu Firebase
+    showToast('⏳', 'Đang xử lý ảnh...');
+    const compressed = await compressImage(e.target.result, 800, 800, 0.55);
+    const now = Date.now();
+    const newItem = {
+      id: now, emoji: '📸',
+      label: (currentUser ? currentUser.name + ' – ' : '') + 'Ảnh mới',
+      club: currentUser ? (currentUser.club || 'Chung') : 'Chung',
+      time: new Date().toLocaleDateString('vi-VN'),
+      author: currentUser ? currentUser.name : 'Ẩn danh',
+      dataUrl: compressed,
+      isEmoji: false,
+    };
+    galleryItems.unshift(newItem);
+    lsSet(LS_GALLERY, galleryItems);
+    if (window.FB && window.FB.ready) {
+      window.FB.push('vancanh/gallery', newItem)
+        .then(() => showToast('📷', 'Đã đăng ảnh — đồng bộ cloud ☁️'))
+        .catch(() => showToast('📷', 'Đã đăng ảnh thành công!'));
+    } else {
+      showToast('📷', 'Đã đăng ảnh thành công!');
+    }
+    renderGallery();
+    awardXP(5, '📷 Đăng ảnh CLB');
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+// ─── 3. LỊCH HOẠT ĐỘNG ───
+
+const CAL_EVENTS = [
+  { id:1, day:28, month:2, year:2025, title:'Hội thi Khoa học Kỹ thuật', club:'CLB Lập trình', color:'#5b6cff', icon:'🏆', gcal:true, location:'Hội trường A' },
+  { id:2, day:1,  month:3, year:2025, title:'Workshop Nhiếp ảnh', club:'CLB Nhiếp ảnh', color:'#ff5c8a', icon:'📷', gcal:true, location:'Phòng đa năng' },
+  { id:3, day:5,  month:3, year:2025, title:'Đêm nhạc "Giai điệu tuổi học trò"', club:'CLB Âm nhạc', color:'#f59e0b', icon:'🎵', gcal:true, location:'Sân khấu chính' },
+  { id:4, day:12, month:3, year:2025, title:'Giải bóng đá mini liên CLB', club:'CLB Thể thao', color:'#34d399', icon:'⚽', gcal:true, location:'Sân bóng' },
+  { id:5, day:20, month:3, year:2025, title:'English Day – Giao lưu quốc tế', club:'CLB Tiếng Anh', color:'#a78bfa', icon:'🌍', gcal:true, location:'Sân trường' },
+  { id:6, day:15, month:4, year:2025, title:'Demo sản phẩm STEM cuối kỳ', club:'CLB Lập trình', color:'#5b6cff', icon:'🤖', gcal:true, location:'Phòng máy tính' },
+  { id:7, day:22, month:4, year:2025, title:'Hội trại CLB tháng 4', club:'Toàn trường', color:'#fbbf24', icon:'🏕️', gcal:true, location:'Khu dã ngoại' },
+  { id:8, day:3,  month:5, year:2025, title:'Tổng kết CLB năm học 2024–2025', club:'Toàn trường', color:'#34d399', icon:'🎓', gcal:true, location:'Hội trường lớn' },
+];
+
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+
+function calNav(dir, mode) {
+  if (mode === 'today') { calYear = new Date().getFullYear(); calMonth = new Date().getMonth(); }
+  else { calMonth += dir; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } }
+  renderCalendar();
+}
+
+_v16_renderCalendar_legacy = function() {
+  const months = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  const el = document.getElementById('cal-month-title');
+  if (el) el.textContent = months[calMonth] + ', ' + calYear;
+
+  const today = new Date();
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+
+  const daysEl = document.getElementById('cal-days');
+  if (!daysEl) return;
+  let html = '';
+  // Prev month days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num" style="color:var(--surface3)">${daysInPrev - i}</div></div>`;
+  }
+  // Current month days
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+    const dayEvents = CAL_EVENTS.filter(e => e.day === d && e.month === calMonth + 1 && e.year === calYear);
+    const evDots = dayEvents.map(e => `<div class="cal-event-dot" style="background:${e.color}22;color:${e.color}">${e.icon} ${e.title.length > 12 ? e.title.slice(0,12)+'…' : e.title}</div>`).join('');
+    html += `<div class="cal-day${isToday?' today':''}"><div class="cal-day-num">${d}</div>${evDots}</div>`;
+  }
+  // Fill remaining
+  const total = firstDay + daysInMonth;
+  const remain = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let d = 1; d <= remain; d++) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num" style="color:var(--surface3)">${d}</div></div>`;
+  }
+  daysEl.innerHTML = html;
+
+  // Upcoming events panel
+  const panelEl = document.getElementById('cal-events-panel');
+  const countEl = document.getElementById('cal-events-count');
+  const now = new Date();
+  const upcoming = CAL_EVENTS.filter(e => new Date(e.year, e.month-1, e.day) >= new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+    .sort((a,b) => new Date(a.year,a.month-1,a.day) - new Date(b.year,b.month-1,b.day))
+    .slice(0, 8);
+  if (countEl) countEl.textContent = `(${upcoming.length} sự kiện)`;
+  if (panelEl) {
+    if (upcoming.length === 0) {
+      panelEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">Không có sự kiện sắp tới</div>';
+    } else {
+      const mNames = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+      panelEl.innerHTML = upcoming.map(ev => {
+        const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title)}&dates=${ev.year}${String(ev.month).padStart(2,'0')}${String(ev.day).padStart(2,'0')}/${ev.year}${String(ev.month).padStart(2,'0')}${String(ev.day).padStart(2,'0')}&location=${encodeURIComponent(ev.location||'')}`;
+        return `
+        <div class="cal-event-card">
+          <div class="cal-event-date-box" style="background:${ev.color}22;color:${ev.color}">
+            <div class="cal-event-date-day">${ev.day}</div>
+            <div class="cal-event-date-month">${mNames[ev.month-1]}</div>
+          </div>
+          <div class="cal-event-info">
+            <div class="cal-event-title">${ev.icon} ${ev.title}</div>
+            <div class="cal-event-meta">${ev.club} ${ev.location ? '· 📍 '+ev.location : ''}</div>
+          </div>
+          ${ev.gcal ? `<a href="${gcalUrl}" target="_blank" rel="noopener" class="gcal-add-btn" title="Thêm vào Google Calendar" onclick="awardXP(5,'📅 Đăng ký sự kiện')">
+            <span>📅</span><span style="display:none" class="cal-btn-text"> Google Calendar</span>
+          </a>` : ''}
+        </div>`;
+      }).join('');
+    }
   }
 }
 
+// ─── 4. GAMIFICATION / BẢNG XẾP HẠNG ───
+
+const LS_XP = 'vc_xp_v1';
+const BADGES_DEF = [
+  { id:'newcomer', icon:'🌱', label:'Thành viên mới', req: xp => xp >= 10 },
+  { id:'active',   icon:'⚡', label:'Năng động',       req: xp => xp >= 50 },
+  { id:'social',   icon:'🤝', label:'Giao lưu tốt',    req: xp => xp >= 100 },
+  { id:'star',     icon:'⭐', label:'Ngôi sao CLB',    req: xp => xp >= 200 },
+  { id:'legend',   icon:'🏅', label:'Huyền thoại',     req: xp => xp >= 500 },
+];
+
+function getMyXP() {
+  if (!currentUser) return 0;
+  const all = lsGet(LS_XP, {});
+  // ✅ FIX: dùng safe key giống như Firebase
+  const safeKey = currentUser.name.replace(/[.#$[\]/]/g,'_');
+  return all[safeKey] || all[currentUser.name] || 0;
+}
+function setMyXP(val) {
+  if (!currentUser) return;
+  // ✅ FIX: lưu theo safe key để khớp với Firebase
+  const safeKey = currentUser.name.replace(/[.#$[\]/]/g,'_');
+  const all = lsGet(LS_XP, {});
+  all[safeKey] = val;
+  lsSet(LS_XP, all);
+  // Sync to Firebase
+  if (window.FB && window.FB.ready) {
+    window.FB.set('vancanh/xp/' + safeKey, val);
+  }
+}
+function awardXP(amount, reason) {
+  if (!currentUser) return;
+  const cur = getMyXP();
+  setMyXP(cur + amount);
+  const toast = document.getElementById('xp-toast');
+  if (toast) {
+    toast.textContent = `⚡ +${amount} XP — ${reason}`;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+}
+
+// Leaderboard sample data (merged with real users)
+const LB_SAMPLE = [
+  { name:'Nguyễn Hoàng Anh', club:'CLB Lập trình', xp:420, color:'linear-gradient(135deg,#5b6cff,#7b8aff)' },
+  { name:'Trần Thị Bình', club:'CLB Âm nhạc', xp:385, color:'linear-gradient(135deg,#FF6584,#FF8E53)' },
+  { name:'Minh Khoa', club:'CLB Âm nhạc', xp:310, color:'linear-gradient(135deg,#43E97B,#38F9D7)' },
+  { name:'Hà Phương', club:'CLB Tiếng Anh', xp:275, color:'linear-gradient(135deg,#F7971E,#FFD200)' },
+  { name:'Đức Anh', club:'CLB Thể thao', xp:240, color:'linear-gradient(135deg,#a78bfa,#8b5cf6)' },
+  { name:'Thảo Nguyên', club:'CLB Nhiếp ảnh', xp:195, color:'linear-gradient(135deg,#34d399,#059669)' },
+  { name:'Bảo Long', club:'CLB Lập trình', xp:160, color:'linear-gradient(135deg,#fb7185,#e11d48)' },
+  { name:'Kiều My', club:'CLB Tiếng Anh', xp:130, color:'linear-gradient(135deg,#fbbf24,#d97706)' },
+];
+
+async function renderLeaderboard() {
+  // Fetch real XP from Firebase
+  let xpData = lsGet(LS_XP, {});
+  if (window.FB && window.FB.ready) {
+    const fbXp = await window.FB.get('vancanh/xp');
+    if (fbXp) {
+      // Merge Firebase vào local (Firebase là nguồn chính xác nhất)
+      Object.assign(xpData, fbXp);
+      lsSet(LS_XP, xpData);
+    }
+  }
+
+  // ✅ FIX: helper lấy XP theo safe key
+  function getXpOf(name) {
+    const safe = name.replace(/[.#$[\]/]/g,'_');
+    return xpData[safe] || xpData[name] || 0;
+  }
+
+  // Build combined leaderboard — bắt đầu từ sample, override bằng XP thực
+  let board = LB_SAMPLE.map(u => ({ ...u, xp: getXpOf(u.name) || u.xp }));
+
+  // ✅ Thêm tất cả user thật đã đăng ký (không chỉ user hiện tại)
+  const allRegistered = getUsers();
+  allRegistered.forEach(u => {
+    if (!board.find(b => b.name === u.name)) {
+      board.push({
+        name: u.name,
+        club: u.club || 'CLB Lập trình',
+        xp: getXpOf(u.name),
+        color: 'linear-gradient(135deg,#5b6cff,#7b8aff)',
+        isMe: currentUser && u.name === currentUser.name
+      });
+    } else {
+      // Cập nhật XP thực cho user trong sample
+      const idx = board.findIndex(b => b.name === u.name);
+      if (idx >= 0) board[idx].xp = getXpOf(u.name) || board[idx].xp;
+      if (currentUser && u.name === currentUser.name) board[idx].isMe = true;
+    }
+  });
+
+  // Đảm bảo user hiện tại có trong board
+  if (currentUser && !board.find(u => u.name === currentUser.name)) {
+    board.push({
+      name: currentUser.name, club: currentUser.club || 'CLB Lập trình',
+      xp: getXpOf(currentUser.name),
+      color: 'linear-gradient(135deg,#5b6cff,#7b8aff)', isMe: true
+    });
+  }
+  board.sort((a,b) => b.xp - a.xp);
+
+  const myXP = currentUser ? getXpOf(currentUser.name) : 0;
+  const myRank = currentUser ? board.findIndex(u => u.name === currentUser.name) + 1 : '–';
+  const myBadges = BADGES_DEF.filter(b => b.req(myXP));
+  const nextBadge = BADGES_DEF.find(b => !b.req(myXP));
+
+  // My stats
+  const statsEl = document.getElementById('lb-my-stats-box');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+        <div class="avatar xl" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">${currentUser ? currentUser.initial : '?'}</div>
+        <div style="flex:1">
+          <div style="font-size:17px;font-weight:800;margin-bottom:4px">${currentUser ? currentUser.name : 'Chưa đăng nhập'}</div>
+          <div class="lb-badge-row">${myBadges.map(b=>`<span class="lb-badge" style="background:rgba(251,191,36,0.12);color:var(--accent4)">${b.icon} ${b.label}</span>`).join('') || '<span style="font-size:13px;color:var(--muted)">Chưa có huy hiệu</span>'}</div>
+        </div>
+      </div>
+      <div class="lb-stat-box">
+        <div class="lb-stat-val" style="color:var(--accent4)">${myXP}</div>
+        <div class="lb-stat-label">Điểm XP</div>
+      </div>
+      <div class="lb-stat-box">
+        <div class="lb-stat-val" style="color:var(--accent-light)">#${myRank}</div>
+        <div class="lb-stat-label">Xếp hạng</div>
+      </div>
+      <div class="lb-stat-box">
+        <div class="lb-stat-val" style="color:var(--accent2)">${myBadges.length}</div>
+        <div class="lb-stat-label">Huy hiệu</div>
+      </div>
+      ${nextBadge ? `
+      <div style="grid-column:1/-1;margin-top:4px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Tiến tới: ${nextBadge.icon} ${nextBadge.label}</div>
+        <div class="lb-progress-bar"><div class="lb-progress-fill" style="width:${Math.min(100,myXP/5)}%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+      </div>` : ''}
+    `;
+  }
+
+  // Podium (top 3)
+  const podiumEl = document.getElementById('lb-podium');
+  const podiumOrder = [board[1], board[0], board[2]].filter(Boolean);
+  const heights = [80, 110, 60];
+  const podiumColors = ['#c0c0c0','#fbbf24','#cd7f32'];
+  const ranks = [2, 1, 3];
+  const crowns = ['🥈','👑','🥉'];
+  if (podiumEl) {
+    podiumEl.innerHTML = podiumOrder.map((u, i) => `
+      <div class="lb-podium-item">
+        <div class="lb-podium-avatar" style="background:${u.color};width:${i===1?70:56}px;height:${i===1?70:56}px">
+          ${u.name.charAt(0).toUpperCase()}
+          <span class="lb-crown">${crowns[i]}</span>
+        </div>
+        <div class="lb-podium-name">${u.name.split(' ').pop()}</div>
+        <div class="lb-podium-pts" style="color:${podiumColors[i]}">${u.xp} XP</div>
+        <div class="lb-podium-stand" style="background:${podiumColors[i]}33;height:${heights[i]}px;color:${podiumColors[i]}">${ranks[i]}</div>
+      </div>
+    `).join('');
+  }
+
+  // Full list
+  const listEl = document.getElementById('lb-list');
+  if (listEl) {
+    listEl.innerHTML = board.map((u, i) => {
+      const isMe = currentUser && u.name === currentUser.name;
+      const badges = BADGES_DEF.filter(b => b.req(u.xp));
+      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+      return `
+      <div class="lb-row${isMe?' me':''}">
+        <div class="lb-rank">${medal}</div>
+        <div class="avatar sm" style="background:${u.color}">${u.name.charAt(0).toUpperCase()}</div>
+        <div class="lb-info">
+          <div class="lb-name">${u.name}${isMe?' <span style="font-size:11px;color:var(--accent-light)">(Bạn)</span>':''}</div>
+          <div class="lb-sub">${u.club} · ${badges.length > 0 ? badges.map(b=>b.icon).join('') : '–'}</div>
+        </div>
+        <div class="lb-pts">${u.xp} XP</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Render XP how-to-earn
+  const xpHowEl = document.getElementById('xp-how-to-earn');
+  if (xpHowEl) {
+    const xpItems = [['📝','Đăng bài viết','+ 10 XP'],['❤️','Nhận lượt thích','+ 5 XP'],['💬','Bình luận','+ 3 XP'],['👥','Kết bạn mới','+ 8 XP'],['🏛️','Tham gia CLB','+ 15 XP'],['📅','Tham dự sự kiện','+ 20 XP']];
+    xpHowEl.innerHTML = xpItems.map(([ic,t,p]) => `
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">${ic}</span>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600">${t}</div><div style="font-size:12px;color:var(--accent3);font-weight:700">${p}</div></div>
+      </div>`).join('');
+  }
+}
+
+// ─── V17 NEW FEATURES ───
+
+// ── 1. CLUB POSTS (đăng bài trong CLB) ──
+async function submitClubPost() {
+  const input = document.getElementById('club-post-input');
+  const text = input.value.trim();
+  if (!text || !currentUser || currentClubIdx === null) { showToast('⚠️','Vui lòng nhập nội dung!'); return; }
+  const g = groups[currentClubIdx];
+  const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
+  const post = {
+    id: Date.now(), author: currentUser.name, initial: currentUser.initial,
+    color: 'linear-gradient(135deg,#5b6cff,#7b8aff)',
+    text, time: 'Vừa xong', likes: 0
+  };
+  if (window.FB && window.FB.ready) {
+    await window.FB.push('vancanh/club_posts/' + safeClub, post);
+  } else {
+    const key = 'vc_club_posts_' + safeClub;
+    const arr = lsGet(key, []);
+    arr.unshift(post);
+    lsSet(key, arr);
+  }
+  input.value = '';
+  await renderClubPostsList(currentClubIdx);
+  showToast('✅','Đã đăng bài lên ' + g.name + '!');
+  awardXP(10,'📝 Đăng bài CLB');
+}
+
+async function renderClubPostsList(idx) {
+  const g = groups[idx];
+  const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
+  let posts = [];
+  if (window.FB && window.FB.ready) {
+    const val = await window.FB.get('vancanh/club_posts/' + safeClub);
+    if (val) posts = Object.values(val).sort((a,b) => b.id - a.id);
+  } else {
+    posts = lsGet('vc_club_posts_' + safeClub, [
+      { id:1, author:'Admin CLB', initial:'A', color:'linear-gradient(135deg,var(--accent),var(--accent-light))', text:'Chào mừng đến với ' + g.name + '! 🎉', time:'1 ngày trước', likes:0 },
+      { id:2, author:'Thành viên', initial:'T', color:'linear-gradient(135deg,#34d399,#059669)', text:'Buổi sinh hoạt tuần này rất thú vị! Mọi người cùng tham gia nhé 💪', time:'2 ngày trước', likes:0 },
+    ]);
+  }
+  const el = document.getElementById('club-posts-list');
+  if (!el) return;
+  el.innerHTML = posts.map(p => `
+    <div class="club-post-card">
+      <div class="post-header">
+        <div class="avatar sm" style="background:${p.color}">${p.initial}</div>
+        <div class="post-meta"><div class="post-author">${p.author}</div><div class="post-time">${p.time}</div></div>
+        <span class="post-club-tag">${g.name}</span>
+      </div>
+      <div class="post-body">${p.text}</div>
+      <div class="post-actions">
+        <button class="btn-action">🤍 ${p.likes||0}</button>
+        <button class="btn-action">💬 Bình luận</button>
+      </div>
+    </div>`).join('') || '<div style="text-align:center;color:var(--muted);padding:30px;font-size:13px">Chưa có bài viết nào</div>';
+}
+
+// ── 2. NEWS EVENT MODAL (Chủ & Phó CLB đăng sự kiện) ──
+let _newsData_dynamic = [];
+
 async function checkNewsAddPermission() {
   if (!currentUser) return false;
+  // Kiểm tra local clubRoles trước (nhanh, không cần Firebase)
+  if (currentUser.clubRoles) {
+    for (const role of Object.values(currentUser.clubRoles)) {
+      if (role === 'Chủ CLB' || role === 'Phó CLB') return true;
+    }
+  }
+  // Kiểm tra qua Firebase nếu có
   if (window.FB && window.FB.ready) {
     for (const g of groups) {
       if (!g.joined) continue;
@@ -5548,13 +6366,14 @@ async function saveNewsEvent() {
         type==='achievement' ? 'linear-gradient(135deg,rgba(52,211,153,0.2),rgba(5,150,105,0.1))' :
         'linear-gradient(135deg,rgba(255,92,138,0.2),rgba(236,72,153,0.08))',
     title, desc: desc || title, date: date || new Date().toLocaleDateString('vi-VN'),
-    club: currentUser.club || 'CLB',
+    club: currentUser.club || (currentUser.clubRoles ? Object.keys(currentUser.clubRoles)[0] : 'CLB'),
     author: currentUser.name,
     body: body || desc || title,
     location, gcal: !!location
   };
   if (window.FB && window.FB.ready) {
     await window.FB.push('vancanh/news_events', newItem);
+    // Tải lại
     const val = await window.FB.get('vancanh/news_events');
     if (val) _newsData_dynamic = Object.values(val).sort((a,b) => b.id - a.id);
   } else {
@@ -5566,8 +6385,38 @@ async function saveNewsEvent() {
   showToast('✅','Đã đăng sự kiện!');
 }
 
+// Override renderNews để hiển thị cả tin tĩnh và tin động
+const _origRenderNews = renderNews;
+function renderNews() {
+  const grid = document.getElementById('news-grid');
+  if (!grid) return;
+  const combined = [..._newsData_dynamic, ...NEWS_DATA];
+  const filtered = newsFilter === 'all' ? combined : combined.filter(n => n.type === newsFilter);
+  const tagColors = { event:'rgba(91,108,255,0.15);color:var(--accent-light)', achievement:'rgba(251,191,36,0.15);color:var(--accent4)', activity:'rgba(52,211,153,0.12);color:var(--accent3)' };
+  const tagLabels = { event:'📅 Sự kiện', achievement:'🏆 Thành tích', activity:'🎯 Hoạt động' };
+  grid.innerHTML = filtered.map(n => `
+    <div class="news-card" onclick="openNewsDetail_v2(${n.id})">
+      <div class="news-card-banner" style="background:${n.bg}">${n.emoji}</div>
+      <div class="news-card-body">
+        <span class="news-tag" style="background:${tagColors[n.type]}">${tagLabels[n.type]||'📋'}</span>
+        <div class="news-card-title">${n.title}</div>
+        <div class="news-card-desc">${n.desc}</div>
+        <div class="news-card-meta"><span>📅 ${n.date}</span><span>•</span><span>${n.club}</span></div>
+      </div>
+    </div>`).join('');
+  // Kiểm tra quyền hiển thị nút đăng sự kiện (Chủ CLB & Phó CLB)
+  if (currentUser) {
+    checkNewsAddPermission().then(ok => {
+      const btn = document.getElementById('news-add-btn');
+      if (btn) btn.style.display = ok ? '' : 'none';
+    });
+  }
+}
+
+// Wrapper cho openNewsDetail để xử lý cả tin động
 function openNewsDetail_v2(id) {
-  const n = _newsData_dynamic.find(x => x.id === id);
+  const allNews = [..._newsData_dynamic, ...NEWS_DATA];
+  const n = allNews.find(x => x.id === id);
   if (!n) return;
   const tagColors = { event:'rgba(91,108,255,0.15);color:var(--accent-light)', achievement:'rgba(251,191,36,0.15);color:var(--accent4)', activity:'rgba(52,211,153,0.12);color:var(--accent3)' };
   const tagLabels = { event:'📅 Sự kiện', achievement:'🏆 Thành tích', activity:'🎯 Hoạt động' };
@@ -5586,142 +6435,54 @@ function openNewsDetail_v2(id) {
   document.getElementById('news-detail-overlay').classList.add('open');
   awardXP(3,'📰 Đọc tin tức');
 }
-function closeNewsDetail() {
-  document.getElementById('news-detail-overlay').classList.remove('open');
+
+// ── 3. LỊCH THÀNH VIÊN (ghi lịch cá nhân) ──
+const LS_MY_SCHEDULE = 'vc_my_schedule';
+
+function openMemberScheduleModal() {
+  const now = new Date();
+  document.getElementById('sched-day').value = now.getDate();
+  document.getElementById('sched-month').value = now.getMonth()+1;
+  document.getElementById('sched-year').value = now.getFullYear();
+  document.getElementById('sched-title').value = '';
+  document.getElementById('sched-note').value = '';
+  document.getElementById('member-schedule-modal').classList.add('open');
 }
+function closeMemberScheduleModal() { document.getElementById('member-schedule-modal').classList.remove('open'); }
 
-// ─── 2. THƯ VIỆN ẢNH ───
-let galleryFilter = 'all';
-let galleryItems = [];
-
-function loadGalleryFromFirebase() {
-  if (window.FB && window.FB.ready) {
-    window.FB.get('vancanh/gallery').then(val => {
-      if (val) {
-        const fbItems = Object.values(val);
-        const merged = [...galleryItems];
-        fbItems.forEach(item => {
-          if (!merged.some(i => i.id === item.id)) merged.unshift(item);
-        });
-        merged.sort((a, b) => b.id - a.id);
-        galleryItems = merged;
-        lsSet(LS_GALLERY, galleryItems);
-      }
-      renderGallery();
-    });
+async function saveMemberSchedule() {
+  const day = parseInt(document.getElementById('sched-day').value)||0;
+  const month = parseInt(document.getElementById('sched-month').value)||0;
+  const year = parseInt(document.getElementById('sched-year').value)||new Date().getFullYear();
+  const title = document.getElementById('sched-title').value.trim();
+  const note = document.getElementById('sched-note').value.trim();
+  if (!title || !day || !month) { showToast('⚠️','Vui lòng điền đầy đủ thông tin!'); return; }
+  const entry = { id: Date.now(), day, month, year, title, note, author: currentUser ? currentUser.name : '' };
+  if (window.FB && window.FB.ready && currentUser) {
+    const safe = currentUser.name.replace(/[.#$[\]/]/g,'_');
+    await window.FB.push('vancanh/member_schedules/' + safe, entry);
   } else {
-    renderGallery();
+    const arr = lsGet(LS_MY_SCHEDULE + '_' + (currentUser ? currentUser.name : ''), []);
+    arr.push(entry);
+    lsSet(LS_MY_SCHEDULE + '_' + (currentUser ? currentUser.name : ''), arr);
   }
-}
-
-function filterGallery(club, btn) {
-  galleryFilter = club;
-  document.querySelectorAll('.gallery-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderGallery();
-}
-function renderGallery() {
-  const grid = document.getElementById('gallery-grid');
-  if (!grid) return;
-  const filtered = galleryFilter === 'all' ? galleryItems : galleryItems.filter(i => i.club === galleryFilter);
-  if (filtered.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Chưa có ảnh nào</div>';
-    return;
-  }
-  grid.innerHTML = filtered.map((item, idx) => {
-    const canDelete = currentUser && (currentUser.name === item.author || currentUser.role === 'admin');
-    const imgSrc = item.imageUrl || item.dataUrl;
-    return `
-    <div class="gallery-item" style="background:${'linear-gradient(135deg,rgba(91,108,255,0.18),rgba(99,102,241,0.08))'}" onclick="openLightbox(${item.id})">
-      ${imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:16px">` : `<span style="font-size:52px">${item.emoji}</span>`}
-      <div class="gallery-item-overlay">
-        <div class="gallery-item-label">${item.label}<br><span style="opacity:0.7;font-size:11px">${item.club}</span></div>
-      </div>
-      ${canDelete ? `<button class="gallery-delete-btn" onclick="event.stopPropagation();deleteGalleryPhoto(${item.id})" title="Xóa ảnh">🗑️</button>` : ''}
-    </div>`;
-  }).join('');
-}
-function openLightbox(id) {
-  const item = galleryItems.find(i => i.id === id);
-  if (!item) return;
-  const lb = document.getElementById('gallery-lightbox');
-  if (!lb) return;
-  document.getElementById('lb-content').innerHTML = (item.imageUrl || item.dataUrl)
-    ? `<img class="gallery-lightbox-img" src="${item.imageUrl || item.dataUrl}" alt="${item.label}">`
-    : `<div class="gallery-lightbox-emoji">${item.emoji}</div>`;
-  document.getElementById('lb-caption').textContent = item.label + ' · ' + item.club + ' · ' + item.time;
-  const canDelete = currentUser && (currentUser.name === item.author || currentUser.role === 'admin');
-  const delBtn = document.getElementById('lb-delete-btn');
-  if (delBtn) {
-    delBtn.style.display = canDelete ? 'inline-flex' : 'none';
-    delBtn.onclick = () => { closeLightbox(); deleteGalleryPhoto(id); };
-  }
-  lb.classList.add('open');
-}
-function closeLightbox() {
-  document.getElementById('gallery-lightbox').classList.remove('open');
-}
-function deleteGalleryPhoto(id) {
-  const item = galleryItems.find(i => i.id === id);
-  if (!item) return;
-  const canDelete = currentUser && (currentUser.name === item.author || currentUser.role === 'admin');
-  if (!canDelete) { showToast('⚠️', 'Bạn không có quyền xóa ảnh này!'); return; }
-  if (!confirm('Xóa ảnh "' + item.label + '" khỏi thư viện?')) return;
-  galleryItems = galleryItems.filter(i => i.id !== id);
-  lsSet(LS_GALLERY, galleryItems);
-  if (window.FB && window.FB.ready) {
-    window.FB.get('vancanh/gallery').then(fb => {
-      if (!fb) return;
-      const key = Object.keys(fb).find(k => fb[k].id === id);
-      if (key) window.FB.remove('vancanh/gallery/' + key);
-    });
-  }
-  renderGallery();
-  showToast('🗑️', 'Đã xóa ảnh khỏi thư viện!');
-}
-function uploadGalleryPhoto(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async e => {
-    showToast('⏳', 'Đang xử lý ảnh...');
-    const compressed = await compressImage(e.target.result, 800, 800, 0.55);
-    const now = Date.now();
-    const newItem = {
-      id: now, emoji: '📸',
-      label: (currentUser ? currentUser.name + ' – ' : '') + 'Ảnh mới',
-      club: currentUser ? (currentUser.club || 'Chung') : 'Chung',
-      time: new Date().toLocaleDateString('vi-VN'),
-      author: currentUser ? currentUser.name : 'Ẩn danh',
-      dataUrl: compressed,
-      isEmoji: false,
-    };
-    galleryItems.unshift(newItem);
-    lsSet(LS_GALLERY, galleryItems);
-    if (window.FB && window.FB.ready) {
-      window.FB.push('vancanh/gallery', newItem)
-        .then(() => showToast('📷', 'Đã đăng ảnh — đồng bộ cloud ☁️'))
-        .catch(() => showToast('📷', 'Đã đăng ảnh thành công!'));
-    } else {
-      showToast('📷', 'Đã đăng ảnh thành công!');
-    }
-    renderGallery();
-    awardXP(5, '📷 Đăng ảnh CLB');
-  };
-  reader.readAsDataURL(file);
-  input.value = '';
-}
-
-// ─── 3. LỊCH HOẠT ĐỘNG ───
-let calYear = new Date().getFullYear();
-let calMonth = new Date().getMonth();
-
-function calNav(dir, mode) {
-  if (mode === 'today') { calYear = new Date().getFullYear(); calMonth = new Date().getMonth(); }
-  else { calMonth += dir; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } }
+  closeMemberScheduleModal();
   renderCalendar();
+  showToast('✅','Đã ghi lịch: ' + title);
 }
 
+async function loadMySchedule() {
+  if (!currentUser) return [];
+  const safe = currentUser.name.replace(/[.#$[\]/]/g,'_');
+  if (window.FB && window.FB.ready) {
+    const val = await window.FB.get('vancanh/member_schedules/' + safe);
+    return val ? Object.values(val) : [];
+  }
+  return lsGet(LS_MY_SCHEDULE + '_' + currentUser.name, []);
+}
+
+// Override renderCalendar để hiển thị lịch cá nhân
+const _origRenderCalendar = renderCalendar;
 function renderCalendar() {
   const months = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
   const el = document.getElementById('cal-month-title');
@@ -5740,7 +6501,7 @@ function renderCalendar() {
     }
     for (let d = 1; d <= daysInMonth; d++) {
       const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
-      const dayEvents = []; // no hardcoded events
+      const dayEvents = CAL_EVENTS.filter(e => e.day === d && e.month === calMonth + 1 && e.year === calYear);
       const myDayEntries = myEntries.filter(e => e.day === d && e.month === calMonth + 1 && e.year === calYear);
       const evDots = dayEvents.map(e => `<div class="cal-event-dot" style="background:${e.color}22;color:${e.color}">${e.icon} ${e.title.length > 12 ? e.title.slice(0,12)+'…' : e.title}</div>`).join('');
       const myDots = myDayEntries.map(e => `<div class="cal-event-dot" style="background:rgba(52,211,153,0.15);color:var(--accent3)">✏️ ${e.title.length > 10 ? e.title.slice(0,10)+'…' : e.title}</div>`).join('');
@@ -5753,6 +6514,7 @@ function renderCalendar() {
     }
     daysEl.innerHTML = html;
 
+    // Lịch của tôi sắp tới
     const nowDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const upcoming = myEntries.filter(e => new Date(e.year, e.month-1, e.day) >= nowDate).sort((a,b) => new Date(a.year,a.month-1,a.day)-new Date(b.year,b.month-1,b.day));
     const secEl = document.getElementById('my-schedule-section');
@@ -5773,14 +6535,17 @@ function renderCalendar() {
             <button onclick="deleteMemberSchedule(${e.id})" style="padding:6px 12px;border-radius:8px;background:rgba(255,92,138,0.1);border:1px solid rgba(255,92,138,0.3);color:var(--accent2);font-size:12px;cursor:pointer">🗑️</button>
           </div>`).join('');
       } else {
-        secEl.style.display = 'none';
+        secEl.style.display = upcoming.length > 0 ? '' : 'none';
       }
     }
   });
 
+  // Upcoming CLB events panel
   const panelEl = document.getElementById('cal-events-panel');
   const countEl = document.getElementById('cal-events-count');
-  const upcoming2 = []; // no hardcoded events
+  const now2 = new Date();
+  const upcoming2 = CAL_EVENTS.filter(e => new Date(e.year, e.month-1, e.day) >= new Date(now2.getFullYear(), now2.getMonth(), now2.getDate()))
+    .sort((a,b) => new Date(a.year,a.month-1,a.day) - new Date(b.year,b.month-1,b.day)).slice(0, 8);
   if (countEl) countEl.textContent = '(' + upcoming2.length + ' sự kiện)';
   if (panelEl) {
     if (upcoming2.length === 0) {
@@ -5808,11 +6573,13 @@ function renderCalendar() {
 function showDaySchedule(d, m, y) {
   loadMySchedule().then(entries => {
     const dayEntries = entries.filter(e => e.day === d && e.month === m && e.year === y);
-    if (dayEntries.length === 0) {
+    const dayClubEvents = CAL_EVENTS.filter(e => e.day === d && e.month === m && e.year === y);
+    if (dayEntries.length === 0 && dayClubEvents.length === 0) {
       showToast('📅', `${d}/T${m}: Không có lịch`);
     } else {
+      const clubs = dayClubEvents.map(e => e.icon + ' ' + e.title).join(', ');
       const my = dayEntries.map(e => '✏️ ' + e.title).join(', ');
-      showToast('📅', `${d}/T${m}: ${my}`);
+      showToast('📅', `${d}/T${m}: ${[clubs,my].filter(Boolean).join(' | ')}`);
     }
   });
 }
@@ -5835,50 +6602,12 @@ async function deleteMemberSchedule(id) {
   showToast('🗑️','Đã xóa lịch!');
 }
 
-const LS_MY_SCHEDULE = 'vc_my_schedule';
-function openMemberScheduleModal() {
-  const now = new Date();
-  document.getElementById('sched-day').value = now.getDate();
-  document.getElementById('sched-month').value = now.getMonth()+1;
-  document.getElementById('sched-year').value = now.getFullYear();
-  document.getElementById('sched-title').value = '';
-  document.getElementById('sched-note').value = '';
-  document.getElementById('member-schedule-modal').classList.add('open');
-}
-function closeMemberScheduleModal() { document.getElementById('member-schedule-modal').classList.remove('open'); }
-async function saveMemberSchedule() {
-  const day = parseInt(document.getElementById('sched-day').value)||0;
-  const month = parseInt(document.getElementById('sched-month').value)||0;
-  const year = parseInt(document.getElementById('sched-year').value)||new Date().getFullYear();
-  const title = document.getElementById('sched-title').value.trim();
-  const note = document.getElementById('sched-note').value.trim();
-  if (!title || !day || !month) { showToast('⚠️','Vui lòng điền đầy đủ thông tin!'); return; }
-  const entry = { id: Date.now(), day, month, year, title, note, author: currentUser ? currentUser.name : '' };
-  if (window.FB && window.FB.ready && currentUser) {
-    const safe = currentUser.name.replace(/[.#$[\]/]/g,'_');
-    await window.FB.push('vancanh/member_schedules/' + safe, entry);
-  } else {
-    const arr = lsGet(LS_MY_SCHEDULE + '_' + (currentUser ? currentUser.name : ''), []);
-    arr.push(entry);
-    lsSet(LS_MY_SCHEDULE + '_' + (currentUser ? currentUser.name : ''), arr);
-  }
-  closeMemberScheduleModal();
-  renderCalendar();
-  showToast('✅','Đã ghi lịch: ' + title);
-}
-async function loadMySchedule() {
-  if (!currentUser) return [];
-  const safe = currentUser.name.replace(/[.#$[\]/]/g,'_');
-  if (window.FB && window.FB.ready) {
-    const val = await window.FB.get('vancanh/member_schedules/' + safe);
-    return val ? Object.values(val) : [];
-  }
-  return lsGet(LS_MY_SCHEDULE + '_' + currentUser.name, []);
-}
+// ── 4. CLB GROUP CHAT (tự động thêm vào group khi tham gia CLB) ──
+const LS_CLUB_GROUPS = 'vc_club_groups';
 
-// ─── 4. CLB GROUP CHAT ───
 function ensureClubGroupChat(clubName, clubEmoji) {
   const groupName = (clubEmoji || '🏛️') + ' ' + clubName;
+  // Kiểm tra group đã có chưa
   if (CHATS.find(c => c.name === groupName && c.isGroup)) return;
   CHATS.unshift({
     id: CHATS.length, name: groupName, isGroup: true,
@@ -5889,11 +6618,13 @@ function ensureClubGroupChat(clubName, clubEmoji) {
     unread: true,
     clubName
   });
+  // ✅ Lưu danh sách club chats để không bị mất khi đăng xuất
   saveClubChats();
   renderChats();
   showToast('💬','Đã thêm vào nhóm chat: ' + groupName);
 }
 
+// ✅ Lưu tất cả group chat CLB vào localStorage + Firebase
 function saveClubChats() {
   if (!currentUser) return;
   const clubChats = CHATS.filter(c => c.isGroup);
@@ -5905,18 +6636,22 @@ function saveClubChats() {
   }
 }
 
+// ✅ Khôi phục group chat CLB khi đăng nhập
 async function loadClubChats(userName) {
   const safe = userName.replace(/[.#$[\]]/g, '_');
   let clubChats = null;
+  // Ưu tiên Firebase
   if (window.FB && window.FB.ready) {
     const fbClubChats = await window.FB.get('vancanh/club_chats/' + safe);
     if (fbClubChats) {
       clubChats = Array.isArray(fbClubChats) ? fbClubChats : Object.values(fbClubChats);
     }
   }
+  // Fallback localStorage
   if (!clubChats) {
     clubChats = lsGet(LS_CLUB_CHATS + '_' + userName, []);
   }
+  // Thêm vào CHATS nếu chưa có
   if (clubChats && clubChats.length > 0) {
     clubChats.forEach(cc => {
       if (!CHATS.find(c => c.name === cc.name && c.isGroup)) {
@@ -5924,6 +6659,7 @@ async function loadClubChats(userName) {
       }
     });
   }
+  // Thêm group chat cho các CLB đã tham gia (phòng khi thiếu)
   groups.forEach(g => {
     if (g.joined) {
       const groupName = (g.emoji || '🏛️') + ' ' + g.name;
@@ -5937,6 +6673,7 @@ async function loadClubChats(userName) {
       }
     }
   });
+  // ✅ FIX: Fetch preview tin nhắn mới nhất cho mỗi group chat từ Firebase
   if (window.FB && window.FB.ready) {
     await Promise.all(CHATS.filter(c => c.isGroup).map(async c => {
       const key = getGroupChatKey(c.clubName || c.name);
@@ -5949,7 +6686,7 @@ async function loadClubChats(userName) {
   }
 }
 
-// ─── 5. ALLOW MEMBERS TO REQUEST PROMOTION ───
+// ── 5. ALLOW MEMBERS TO REQUEST PROMOTION (ứng cử lên chức) ──
 async function requestPromotion(clubName) {
   if (!currentUser || !window.FB || !window.FB.ready) return;
   const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
@@ -5957,6 +6694,7 @@ async function requestPromotion(clubName) {
   const myData = await window.FB.get('vancanh/club_members/' + safeClub + '/' + safeSelf);
   if (!myData) { showToast('⚠️','Bạn chưa là thành viên CLB này!'); return; }
   if (myData.role !== 'Thành viên') { showToast('ℹ️','Bạn đã có chức vụ: ' + myData.role); return; }
+  // Ghi yêu cầu ứng cử
   await window.FB.set('vancanh/club_promotion_requests/' + safeClub + '/' + safeSelf, {
     name: currentUser.name, initial: currentUser.initial,
     color: myData.color || 'linear-gradient(135deg,#5b6cff,#7b8aff)',
@@ -5965,14 +6703,120 @@ async function requestPromotion(clubName) {
   showToast('🌟','Đã gửi yêu cầu ứng cử chức Phó CLB! Chờ Chủ CLB xét duyệt.');
 }
 
+// Mở rộng openClubDetail để thêm nút compose + ứng cử + load posts
+// Lưu bản gốc vào biến trước khi khai báo (tránh hoisting ghi đè)
+const _origOpenClubDetail = openClubDetail;
+openClubDetail = async function openClubDetailExtended(idx) {
+  await _origOpenClubDetail(idx);
+  // Hiển thị compose box nếu đã là thành viên
+  const g = groups[idx];
+  const composeBox = document.getElementById('club-compose-box');
+  if (composeBox) composeBox.style.display = g.joined ? '' : 'none';
+  // Load posts từ Firebase
+  await renderClubPostsList(idx);
+  // Load tin tức động từ Firebase
+  if (window.FB && window.FB.ready) {
+    const val = await window.FB.get('vancanh/news_events');
+    if (val) _newsData_dynamic = Object.values(val).sort((a,b) => b.id - a.id);
+    else {
+      const saved = lsGet('vc_news_events', []);
+      _newsData_dynamic = saved;
+    }
+  }
+  // Nếu thành viên thường → thêm nút ứng cử trong tab members
+  if (window.FB && window.FB.ready) {
+    const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
+    const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
+    const myData = await window.FB.get('vancanh/club_members/' + safeClub + '/' + safeSelf);
+
+    // Kiểm tra CLB đã có Chủ CLB chưa
+    const allMembers = await window.FB.get('vancanh/club_members/' + safeClub) || {};
+    const hasLeader = Object.values(allMembers).some(m => m.role === 'Chủ CLB');
+
+    const myRole = myData ? myData.role : null; // null = chưa join
+
+    if (myRole === 'Thành viên' || (!myRole && !hasLeader)) {
+      const membersPanel = document.getElementById('club-panel-members');
+      if (membersPanel) {
+        // ── Ứng cử Chủ CLB (khi chưa có Chủ) ──
+        if (!hasLeader) {
+          const leaderReqs = await window.FB.get('vancanh/club_leader_requests/' + safeClub) || {};
+          const alreadyAppliedLeader = leaderReqs[safeSelf];
+          const leaderBtn = document.createElement('div');
+          leaderBtn.style.cssText = 'margin-bottom:10px;padding:12px 16px;background:rgba(91,108,255,0.08);border:1px solid rgba(91,108,255,0.25);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px';
+          leaderBtn.innerHTML = alreadyAppliedLeader
+            ? `<div style="font-size:13px;color:var(--muted)">⏳ Đã gửi yêu cầu ứng cử Chủ CLB — đang chờ xét duyệt</div>`
+            : `<div style="font-size:13px;color:var(--accent-light)">👑 CLB chưa có Chủ — bạn có thể ứng cử!</div>
+               <button onclick="requestLeader('${g.name}')" style="padding:7px 14px;border-radius:8px;background:rgba(91,108,255,0.15);border:1px solid rgba(91,108,255,0.35);color:var(--accent-light);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">👑 Ứng cử Chủ CLB</button>`;
+          membersPanel.insertBefore(leaderBtn, membersPanel.firstChild);
+        }
+
+        // ── Ứng cử Phó CLB (khi đã có Chủ, chỉ dành cho thành viên đã join) ──
+        if (hasLeader && myRole === 'Thành viên') {
+          const req = await window.FB.get('vancanh/club_promotion_requests/' + safeClub + '/' + safeSelf);
+          const promoBtn = document.createElement('div');
+          promoBtn.style.cssText = 'margin-bottom:14px;padding:12px 16px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px';
+          promoBtn.innerHTML = req
+            ? `<div style="font-size:13px;color:var(--muted)">⏳ Đã gửi yêu cầu ứng cử Phó CLB — đang chờ duyệt</div>`
+            : `<div style="font-size:13px;color:var(--accent4)">🌟 Bạn có thể ứng cử làm Phó CLB</div>
+               <button onclick="requestPromotion('${g.name}')" style="padding:7px 14px;border-radius:8px;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);color:var(--accent4);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">✋ Ứng cử Phó CLB</button>`;
+          membersPanel.insertBefore(promoBtn, membersPanel.firstChild);
+        }
+      }
+    }
+    // Nếu là Chủ CLB → hiển thị yêu cầu ứng cử Phó CLB + yêu cầu ứng cử Chủ CLB
+    if (myData && myData.role === 'Chủ CLB') {
+      const promoReqs = await window.FB.get('vancanh/club_promotion_requests/' + safeClub) || {};
+      const leaderReqs = await window.FB.get('vancanh/club_leader_requests/' + safeClub) || {};
+      const reqList = Object.entries(promoReqs).filter(([k,v]) => v.status === 'pending');
+      const membersPanel = document.getElementById('club-panel-members');
+      if (membersPanel && reqList.length > 0) {
+        const reqHtml = document.createElement('div');
+        reqHtml.style.cssText = 'margin-bottom:14px;padding:14px;background:rgba(91,108,255,0.07);border:1px solid rgba(91,108,255,0.2);border-radius:12px';
+        reqHtml.innerHTML = `<div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--accent-light)">📋 Yêu cầu ứng cử Phó CLB (${reqList.length})</div>` +
+          reqList.map(([k,v]) => `
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div class="avatar sm" style="background:${v.color||'linear-gradient(135deg,#5b6cff,#7b8aff)'}">${v.initial||v.name.charAt(0)}</div>
+              <div style="flex:1;font-size:13px;font-weight:600">${v.name}</div>
+              <button onclick="approvePromotion('${g.name}','${v.name}','${k}')" style="padding:5px 10px;border-radius:7px;background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);color:var(--accent3);font-size:11px;font-weight:700;cursor:pointer">✓ Duyệt Phó CLB</button>
+              <button onclick="rejectPromotion('${g.name}','${k}')" style="padding:5px 10px;border-radius:7px;background:rgba(255,92,138,0.1);border:1px solid rgba(255,92,138,0.3);color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">✕</button>
+            </div>`).join('');
+        membersPanel.insertBefore(reqHtml, membersPanel.firstChild);
+      }
+    }
+  }
+}
+
+async function approvePromotion(clubName, memberName, reqKey) {
+  const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
+  const safeMember = memberName.replace(/[.#$[\]/]/g,'_');
+  if (window.FB && window.FB.ready) {
+    await window.FB.update('vancanh/club_members/' + safeClub + '/' + safeMember, { role: 'Phó CLB' });
+    await window.FB.remove('vancanh/club_promotion_requests/' + safeClub + '/' + reqKey);
+    showToast('🌟','Đã bổ nhiệm ' + memberName + ' làm Phó CLB!');
+  }
+  await renderClubMembers(currentClubIdx);
+}
+async function rejectPromotion(clubName, reqKey) {
+  const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
+  if (window.FB && window.FB.ready) {
+    await window.FB.remove('vancanh/club_promotion_requests/' + safeClub + '/' + reqKey);
+    showToast('❌','Đã từ chối yêu cầu ứng cử!');
+  }
+  await renderClubMembers(currentClubIdx);
+}
+
+// ── Ứng cử Chủ CLB (khi CLB chưa có Chủ) ──
 async function requestLeader(clubName) {
   if (!currentUser || !window.FB || !window.FB.ready) return;
   const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
   const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
   let myData = await window.FB.get('vancanh/club_members/' + safeClub + '/' + safeSelf);
+  // Kiểm tra CLB đã có Chủ chưa
   const allMembers = await window.FB.get('vancanh/club_members/' + safeClub) || {};
   const hasLeader = Object.values(allMembers).some(m => m.role === 'Chủ CLB');
   if (hasLeader) { showToast('ℹ️','CLB này đã có Chủ CLB rồi!'); return; }
+  // Nếu chưa là thành viên → tự động tham gia trước
   if (!myData) {
     myData = {
       name: currentUser.name, initial: currentUser.initial,
@@ -5994,324 +6838,118 @@ async function requestLeader(clubName) {
     color: myData.color || 'linear-gradient(135deg,#5b6cff,#7b8aff)',
     time: Date.now(), status: 'pending'
   });
+  // Nếu chỉ có 1 yêu cầu hoặc là người đầu tiên → tự động phong làm Chủ CLB
   const leaderReqs = await window.FB.get('vancanh/club_leader_requests/' + safeClub) || {};
   const pendingList = Object.entries(leaderReqs).filter(([k,v]) => v.status === 'pending');
   if (pendingList.length === 1) {
+    // Tự động bổ nhiệm nếu chưa có ai
     await window.FB.update('vancanh/club_members/' + safeClub + '/' + safeSelf, { role: 'Chủ CLB' });
     await window.FB.remove('vancanh/club_leader_requests/' + safeClub + '/' + safeSelf);
     showToast('👑','Chúc mừng! Bạn là Chủ CLB ' + clubName + ' đầu tiên!');
+    // Cập nhật clubRoles local
     if (!currentUser.clubRoles) currentUser.clubRoles = {};
     currentUser.clubRoles[clubName] = 'Chủ CLB';
   } else {
     showToast('🌟','Đã gửi yêu cầu ứng cử Chủ CLB! Đang được xét duyệt.');
   }
   await renderClubMembers(currentClubIdx);
-  renderNews();
+  renderNews(); // Cập nhật nút đăng tin tức
 }
 
-// ─── CLUB POSTS ───
-async function submitClubPost() {
-  const input = document.getElementById('club-post-input');
-  const text = input.value.trim();
-  if (!text || !currentUser || currentClubIdx === null) { showToast('⚠️','Vui lòng nhập nội dung!'); return; }
-  const g = groups[currentClubIdx];
-  const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
-  const post = {
-    id: Date.now(), author: currentUser.name, initial: currentUser.initial,
-    color: 'linear-gradient(135deg,#5b6cff,#7b8aff)',
-    text, time: 'Vừa xong', likes: 0
-  };
-  if (window.FB && window.FB.ready) {
-    await window.FB.push('vancanh/club_posts/' + safeClub, post);
-  } else {
-    const key = 'vc_club_posts_' + safeClub;
-    const arr = lsGet(key, []);
-    arr.unshift(post);
-    lsSet(key, arr);
-  }
-  input.value = '';
-  await renderClubPostsList(currentClubIdx);
-  showToast('✅','Đã đăng bài lên ' + g.name + '!');
-  awardXP(10,'📝 Đăng bài CLB');
-}
-
-async function renderClubPostsList(idx) {
-  const g = groups[idx];
-  const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
-  let posts = [];
-  if (window.FB && window.FB.ready) {
-    const val = await window.FB.get('vancanh/club_posts/' + safeClub);
-    if (val) posts = Object.values(val).sort((a,b) => b.id - a.id);
-  } else {
-    posts = lsGet('vc_club_posts_' + safeClub, []);
-  }
-  const el = document.getElementById('club-posts-list');
-  if (!el) return;
-  el.innerHTML = posts.map(p => `
-    <div class="club-post-card">
-      <div class="post-header">
-        <div class="avatar sm" style="background:${p.color}">${p.initial}</div>
-        <div class="post-meta"><div class="post-author">${p.author}</div><div class="post-time">${p.time}</div></div>
-        <span class="post-club-tag">${g.name}</span>
-      </div>
-      <div class="post-body">${p.text}</div>
-      <div class="post-actions">
-        <button class="btn-action">🤍 ${p.likes||0}</button>
-        <button class="btn-action">💬 Bình luận</button>
-      </div>
-    </div>`).join('') || '<div style="text-align:center;color:var(--muted);padding:30px;font-size:13px">Chưa có bài viết nào</div>';
-}
-
-// ─── GAMIFICATION / BẢNG XẾP HẠNG ───
-const LS_XP = 'vc_xp_v1';
-const BADGES_DEF = [
-  { id:'newcomer', icon:'🌱', label:'Thành viên mới', req: xp => xp >= 10 },
-  { id:'active',   icon:'⚡', label:'Năng động',       req: xp => xp >= 50 },
-  { id:'social',   icon:'🤝', label:'Giao lưu tốt',    req: xp => xp >= 100 },
-  { id:'star',     icon:'⭐', label:'Ngôi sao CLB',    req: xp => xp >= 200 },
-  { id:'legend',   icon:'🏅', label:'Huyền thoại',     req: xp => xp >= 500 },
-];
-
-function getMyXP() {
-  if (!currentUser) return 0;
-  const all = lsGet(LS_XP, {});
-  const safeKey = currentUser.name.replace(/[.#$[\]/]/g,'_');
-  return all[safeKey] || all[currentUser.name] || 0;
-}
-function setMyXP(val) {
+// Override joinGroup để thêm vào group chat CLB khi tham gia
+function joinGroup(idx, e) {
+  e.stopPropagation();
   if (!currentUser) return;
-  const safeKey = currentUser.name.replace(/[.#$[\]/]/g,'_');
-  const all = lsGet(LS_XP, {});
-  all[safeKey] = val;
-  lsSet(LS_XP, all);
-  if (window.FB && window.FB.ready) {
-    window.FB.set('vancanh/xp/' + safeKey, val);
-  }
-}
-function awardXP(amount, reason) {
-  if (!currentUser) return;
-  const cur = getMyXP();
-  setMyXP(cur + amount);
-  const toast = document.getElementById('xp-toast');
-  if (toast) {
-    toast.textContent = `⚡ +${amount} XP — ${reason}`;
-    toast.classList.add('show');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
-  }
-}
-
-async function renderLeaderboard() {
-  let xpData = lsGet(LS_XP, {});
-  if (window.FB && window.FB.ready) {
-    const fbXp = await window.FB.get('vancanh/xp');
-    if (fbXp) {
-      Object.assign(xpData, fbXp);
-      lsSet(LS_XP, xpData);
-    }
-  }
-
-  function getXpOf(name) {
-    const safe = name.replace(/[.#$[\]/]/g,'_');
-    return xpData[safe] || xpData[name] || 0;
-  }
-
-  let board = [];
-  const allRegistered = getUsers();
-  allRegistered.forEach(u => {
-    board.push({
-      name: u.name,
-      club: u.club || 'CLB Lập trình',
-      xp: getXpOf(u.name),
-      color: 'linear-gradient(135deg,#5b6cff,#7b8aff)',
-      isMe: currentUser && u.name === currentUser.name
-    });
-  });
-  if (currentUser && !board.find(u => u.name === currentUser.name)) {
-    board.push({
-      name: currentUser.name, club: currentUser.club || 'CLB Lập trình',
-      xp: getXpOf(currentUser.name),
-      color: 'linear-gradient(135deg,#5b6cff,#7b8aff)', isMe: true
-    });
-  }
-  board.sort((a,b) => b.xp - a.xp);
-
-  const myXP = currentUser ? getXpOf(currentUser.name) : 0;
-  const myRank = currentUser ? board.findIndex(u => u.name === currentUser.name) + 1 : '–';
-  const myBadges = BADGES_DEF.filter(b => b.req(myXP));
-  const nextBadge = BADGES_DEF.find(b => !b.req(myXP));
-
-  const statsEl = document.getElementById('lb-my-stats-box');
-  if (statsEl) {
-    statsEl.innerHTML = `
-      <div style="grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
-        <div class="avatar xl" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">${currentUser ? currentUser.initial : '?'}</div>
-        <div style="flex:1">
-          <div style="font-size:17px;font-weight:800;margin-bottom:4px">${currentUser ? currentUser.name : 'Chưa đăng nhập'}</div>
-          <div class="lb-badge-row">${myBadges.map(b=>`<span class="lb-badge" style="background:rgba(251,191,36,0.12);color:var(--accent4)">${b.icon} ${b.label}</span>`).join('') || '<span style="font-size:13px;color:var(--muted)">Chưa có huy hiệu</span>'}</div>
-        </div>
-      </div>
-      <div class="lb-stat-box">
-        <div class="lb-stat-val" style="color:var(--accent4)">${myXP}</div>
-        <div class="lb-stat-label">Điểm XP</div>
-      </div>
-      <div class="lb-stat-box">
-        <div class="lb-stat-val" style="color:var(--accent-light)">#${myRank}</div>
-        <div class="lb-stat-label">Xếp hạng</div>
-      </div>
-      <div class="lb-stat-box">
-        <div class="lb-stat-val" style="color:var(--accent2)">${myBadges.length}</div>
-        <div class="lb-stat-label">Huy hiệu</div>
-      </div>
-      ${nextBadge ? `
-      <div style="grid-column:1/-1;margin-top:4px">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Tiến tới: ${nextBadge.icon} ${nextBadge.label}</div>
-        <div class="lb-progress-bar"><div class="lb-progress-fill" style="width:${Math.min(100,myXP/5)}%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
-      </div>` : ''}
-    `;
-  }
-
-  const podiumEl = document.getElementById('lb-podium');
-  const podiumOrder = [board[1], board[0], board[2]].filter(Boolean);
-  const heights = [80, 110, 60];
-  const podiumColors = ['#c0c0c0','#fbbf24','#cd7f32'];
-  const ranks = [2, 1, 3];
-  const crowns = ['🥈','👑','🥉'];
-  if (podiumEl) {
-    podiumEl.innerHTML = podiumOrder.map((u, i) => `
-      <div class="lb-podium-item">
-        <div class="lb-podium-avatar" style="background:${u.color};width:${i===1?70:56}px;height:${i===1?70:56}px">
-          ${u.name.charAt(0).toUpperCase()}
-          <span class="lb-crown">${crowns[i]}</span>
-        </div>
-        <div class="lb-podium-name">${u.name.split(' ').pop()}</div>
-        <div class="lb-podium-pts" style="color:${podiumColors[i]}">${u.xp} XP</div>
-        <div class="lb-podium-stand" style="background:${podiumColors[i]}33;height:${heights[i]}px;color:${podiumColors[i]}">${ranks[i]}</div>
-      </div>
-    `).join('');
-  }
-
-  const listEl = document.getElementById('lb-list');
-  if (listEl) {
-    listEl.innerHTML = board.map((u, i) => {
-      const isMe = currentUser && u.name === currentUser.name;
-      const badges = BADGES_DEF.filter(b => b.req(u.xp));
-      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-      return `
-      <div class="lb-row${isMe?' me':''}">
-        <div class="lb-rank">${medal}</div>
-        <div class="avatar sm" style="background:${u.color}">${u.name.charAt(0).toUpperCase()}</div>
-        <div class="lb-info">
-          <div class="lb-name">${u.name}${isMe?' <span style="font-size:11px;color:var(--accent-light)">(Bạn)</span>':''}</div>
-          <div class="lb-sub">${u.club} · ${badges.length > 0 ? badges.map(b=>b.icon).join('') : '–'}</div>
-        </div>
-        <div class="lb-pts">${u.xp} XP</div>
-      </div>`;
-    }).join('');
-  }
-
-  const xpHowEl = document.getElementById('xp-how-to-earn');
-  if (xpHowEl) {
-    const xpItems = [['📝','Đăng bài viết','+ 10 XP'],['❤️','Nhận lượt thích','+ 5 XP'],['💬','Bình luận','+ 3 XP'],['👥','Kết bạn mới','+ 8 XP'],['🏛️','Tham gia CLB','+ 15 XP'],['📅','Tham dự sự kiện','+ 20 XP']];
-    xpHowEl.innerHTML = xpItems.map(([ic,t,p]) => `
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:22px">${ic}</span>
-        <div style="flex:1"><div style="font-size:13px;font-weight:600">${t}</div><div style="font-size:12px;color:var(--accent3);font-weight:700">${p}</div></div>
-      </div>`).join('');
-  }
-}
-
-// ─── EXTEND OPEN CLUB DETAIL ───
-const _origOpenClubDetail = openClubDetail;
-openClubDetail = async function openClubDetailExtended(idx) {
-  await _origOpenClubDetail(idx);
   const g = groups[idx];
-  const composeBox = document.getElementById('club-compose-box');
-  if (composeBox) composeBox.style.display = g.joined ? '' : 'none';
-  await renderClubPostsList(idx);
+  if (g.joined) return;
+  const safeName = currentUser.name.replace(/[.#$[\]/]/g,'_');
+  const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
   if (window.FB && window.FB.ready) {
-    const val = await window.FB.get('vancanh/news_events');
-    if (val) _newsData_dynamic = Object.values(val).sort((a,b) => b.id - a.id);
-    else {
-      const saved = lsGet('vc_news_events', []);
-      _newsData_dynamic = saved;
-    }
-  }
-  if (window.FB && window.FB.ready) {
-    const safeClub = g.name.replace(/[.#$[\]/]/g,'_');
-    const safeSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
-    const myData = await window.FB.get('vancanh/club_members/' + safeClub + '/' + safeSelf);
-    const allMembers = await window.FB.get('vancanh/club_members/' + safeClub) || {};
-    const hasLeader = Object.values(allMembers).some(m => m.role === 'Chủ CLB');
-    const myRole = myData ? myData.role : null;
-    if (myRole === 'Thành viên' || (!myRole && !hasLeader)) {
-      const membersPanel = document.getElementById('club-panel-members');
-      if (membersPanel) {
-        if (!hasLeader) {
-          const leaderReqs = await window.FB.get('vancanh/club_leader_requests/' + safeClub) || {};
-          const alreadyAppliedLeader = leaderReqs[safeSelf];
-          const leaderBtn = document.createElement('div');
-          leaderBtn.style.cssText = 'margin-bottom:10px;padding:12px 16px;background:rgba(91,108,255,0.08);border:1px solid rgba(91,108,255,0.25);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px';
-          leaderBtn.innerHTML = alreadyAppliedLeader
-            ? `<div style="font-size:13px;color:var(--muted)">⏳ Đã gửi yêu cầu ứng cử Chủ CLB — đang chờ xét duyệt</div>`
-            : `<div style="font-size:13px;color:var(--accent-light)">👑 CLB chưa có Chủ — bạn có thể ứng cử!</div>
-               <button onclick="requestLeader('${g.name}')" style="padding:7px 14px;border-radius:8px;background:rgba(91,108,255,0.15);border:1px solid rgba(91,108,255,0.35);color:var(--accent-light);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">👑 Ứng cử Chủ CLB</button>`;
-          membersPanel.insertBefore(leaderBtn, membersPanel.firstChild);
-        }
-        if (hasLeader && myRole === 'Thành viên') {
-          const req = await window.FB.get('vancanh/club_promotion_requests/' + safeClub + '/' + safeSelf);
-          const promoBtn = document.createElement('div');
-          promoBtn.style.cssText = 'margin-bottom:14px;padding:12px 16px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px';
-          promoBtn.innerHTML = req
-            ? `<div style="font-size:13px;color:var(--muted)">⏳ Đã gửi yêu cầu ứng cử Phó CLB — đang chờ duyệt</div>`
-            : `<div style="font-size:13px;color:var(--accent4)">🌟 Bạn có thể ứng cử làm Phó CLB</div>
-               <button onclick="requestPromotion('${g.name}')" style="padding:7px 14px;border-radius:8px;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);color:var(--accent4);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">✋ Ứng cử Phó CLB</button>`;
-          membersPanel.insertBefore(promoBtn, membersPanel.firstChild);
-        }
+    window.FB.get('vancanh/club_members/' + safeClub).then(async members => {
+      const hasLeader = members && Object.values(members).some(m => m.role === 'Chủ CLB');
+      const myClubRole = currentUser.clubRoles && currentUser.clubRoles[g.name];
+      if (hasLeader && myClubRole !== 'Chủ CLB') {
+        await window.FB.set('vancanh/club_join_requests/' + safeClub + '/' + safeName, {
+          name: currentUser.name, initial: currentUser.initial,
+          color: 'linear-gradient(135deg,#5b6cff,#7b8aff)',
+          role: 'Thành viên', time: Date.now()
+        });
+        if (currentUser) lsSet(LS_GROUPS + '_' + currentUser.name, groups);
+        renderGroups();
+        showToast('⏳','Đã gửi yêu cầu tham gia ' + g.name + '. Chờ Chủ CLB duyệt!');
+      } else {
+        g.joined = true;
+        const memberData = {
+          name: currentUser.name, initial: currentUser.initial,
+          color: 'linear-gradient(135deg,#5b6cff,#7b8aff)',
+          role: 'Thành viên', time: Date.now()
+        };
+        await window.FB.set('vancanh/club_members/' + safeClub + '/' + safeName, memberData);
+        const count = members ? Object.keys(members).length + 1 : 1;
+        await window.FB.set('vancanh/club_member_count/' + safeClub, count);
+        g.members = count;
+        if (currentUser) lsSet(LS_GROUPS + '_' + currentUser.name, groups);
+        // ✅ Đồng bộ joined_groups lên Firebase ngay lập tức (không đợi logout)
+        await window.FB.set('vancanh/joined_groups/' + safeName, groups);
+        renderGroups();
+        // ✅ Tự động thêm vào group chat CLB
+        ensureClubGroupChat(g.name, g.emoji);
+        showToast('🎉','Đã tham gia ' + g.name + '! Đã thêm vào nhóm chat 💬');
+        awardXP(15,'🏛️ Tham gia CLB');
       }
-    }
-    if (myData && myData.role === 'Chủ CLB') {
-      const promoReqs = await window.FB.get('vancanh/club_promotion_requests/' + safeClub) || {};
-      const reqList = Object.entries(promoReqs).filter(([k,v]) => v.status === 'pending');
-      const membersPanel = document.getElementById('club-panel-members');
-      if (membersPanel && reqList.length > 0) {
-        const reqHtml = document.createElement('div');
-        reqHtml.style.cssText = 'margin-bottom:14px;padding:14px;background:rgba(91,108,255,0.07);border:1px solid rgba(91,108,255,0.2);border-radius:12px';
-        reqHtml.innerHTML = `<div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--accent-light)">📋 Yêu cầu ứng cử Phó CLB (${reqList.length})</div>` +
-          reqList.map(([k,v]) => `
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div class="avatar sm" style="background:${v.color||'linear-gradient(135deg,#5b6cff,#7b8aff)'}">${v.initial||v.name.charAt(0)}</div>
-              <div style="flex:1;font-size:13px;font-weight:600">${v.name}</div>
-              <button onclick="approvePromotion('${g.name}','${v.name}','${k}')" style="padding:5px 10px;border-radius:7px;background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);color:var(--accent3);font-size:11px;font-weight:700;cursor:pointer">✓ Duyệt Phó CLB</button>
-              <button onclick="rejectPromotion('${g.name}','${k}')" style="padding:5px 10px;border-radius:7px;background:rgba(255,92,138,0.1);border:1px solid rgba(255,92,138,0.3);color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">✕</button>
-            </div>`).join('');
-        membersPanel.insertBefore(reqHtml, membersPanel.firstChild);
-      }
-    }
+    });
+  } else {
+    g.joined = true;
+    g.members++;
+    if (currentUser) lsSet(LS_GROUPS + '_' + currentUser.name, groups);
+    renderGroups();
+    ensureClubGroupChat(g.name, g.emoji);
+    showToast('🎉','Đã tham gia ' + g.name + '!');
   }
-};
+}
 
-async function approvePromotion(clubName, memberName, reqKey) {
+// Patch approveJoinRequest để thêm thông báo + group chat khi được duyệt vào CLB
+// (không override lại function — gọi trực tiếp logic gốc bên trong để tránh đệ quy)
+const _approveJoinRequest_withNotify = async function(clubName, memberName, memberInitial, memberColor, memberRole) {
+  // --- Logic gốc của approveJoinRequest ---
   const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
+  const safeSelf = currentUser ? currentUser.name.replace(/[.#$[\]/]/g,'_') : '';
+  if (window.FB && window.FB.ready && safeSelf) {
+    const myData = await window.FB.get('vancanh/club_members/' + safeClub + '/' + safeSelf);
+    if (!myData || myData.role !== 'Chủ CLB') { showToast('🚫','Chỉ Chủ CLB mới có thể duyệt thành viên!'); return; }
+  }
   const safeMember = memberName.replace(/[.#$[\]/]/g,'_');
   if (window.FB && window.FB.ready) {
-    await window.FB.update('vancanh/club_members/' + safeClub + '/' + safeMember, { role: 'Phó CLB' });
-    await window.FB.remove('vancanh/club_promotion_requests/' + safeClub + '/' + reqKey);
-    showToast('🌟','Đã bổ nhiệm ' + memberName + ' làm Phó CLB!');
+    await window.FB.set('vancanh/club_members/' + safeClub + '/' + safeMember, {
+      name: memberName, initial: memberInitial || memberName.charAt(0).toUpperCase(),
+      color: memberColor || 'linear-gradient(135deg,#5b6cff,#7b8aff)',
+      role: 'Thành viên', time: Date.now()
+    });
+    await window.FB.remove('vancanh/club_join_requests/' + safeClub + '/' + safeMember);
+    const members = await window.FB.get('vancanh/club_members/' + safeClub) || {};
+    const newCount = Object.keys(members).length;
+    await window.FB.set('vancanh/club_member_count/' + safeClub, newCount);
+    const gIdx2 = groups.findIndex(g => g.name === clubName);
+    if (gIdx2 !== -1) { groups[gIdx2].members = newCount; }
+    document.getElementById('club-detail-members').textContent = '👥 ' + newCount + ' thành viên';
+    // --- Phần mở rộng: gửi thông báo ---
+    const safeTarget = safeMember;
+    const g = groups[currentClubIdx];
+    await window.FB.push('vancanh/notifications/' + safeTarget, {
+      type: 'club_join', from: clubName, fromInitial: g ? g.emoji : '🏛️',
+      text: 'Yêu cầu tham gia ' + clubName + ' đã được duyệt! 🎉',
+      time: new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),
+      ts: Date.now(), read: false, clubName, clubEmoji: g ? g.emoji : '🏛️'
+    });
   }
   await renderClubMembers(currentClubIdx);
-}
-async function rejectPromotion(clubName, reqKey) {
-  const safeClub = clubName.replace(/[.#$[\]/]/g,'_');
-  if (window.FB && window.FB.ready) {
-    await window.FB.remove('vancanh/club_promotion_requests/' + safeClub + '/' + reqKey);
-    showToast('❌','Đã từ chối yêu cầu ứng cử!');
-  }
-  await renderClubMembers(currentClubIdx);
-}
+  showToast('✅', 'Đã duyệt ' + memberName + ' vào CLB!');
+};
+// Ghi đè hàm gốc bằng phiên bản có thông báo
+approveJoinRequest = _approveJoinRequest_withNotify;
 
-// Patch listenNotifications to handle group calls, club disband, etc.
-const _origListenNotifications = listenNotifications;
+// Patch listenNotifications để xử lý thêm: club_join → tự thêm group chat
+// Ghi đè hoàn toàn (không dùng _orig để tránh đệ quy)
 listenNotifications = function() {
   if (!currentUser || !window.FB || !window.FB.ready) return;
   if (_notifUnlisten) _notifUnlisten();
@@ -6339,32 +6977,40 @@ listenNotifications = function() {
           renderGroups();
         }
       }
+      // Xử lý gọi nhóm — chống trigger lại khi F5
       if (newest.type === 'group_call' && !_handledNotifKeys.has(newest.key)) {
         _handledNotifKeys.add(newest.key);
+        // Kiểm tra phòng còn active không
         const safeR = newest.roomName ? newest.roomName.replace(/[.#$[\]/]/g,'-') : null;
         const isActive = safeR && window.FB && window.FB.ready
           ? await window.FB.get('vancanh/group_calls/' + safeR + '/active')
-          : true;
+          : true; // nếu không có Firebase thì cứ hiện
         if (isActive) {
           showGroupCallBanner(newest);
+          // Xóa notif để không trigger lại
           const s2 = currentUser.name.replace(/[.#$[\]/]/g,'_');
           window.FB.remove('vancanh/notifications/' + s2 + '/' + newest.key);
         }
       }
+      // Xử lý cuộc gọi đến 1-1
       if (newest.type === 'call_offer') {
         handleIncomingCall(newest);
       }
+      // Xử lý thông báo giải tán CLB
       if (newest.type === 'club_disband' && !_handledNotifKeys.has(newest.key)) {
         _handledNotifKeys.add(newest.key);
         showToast('⚠️', newest.text || 'Một CLB bạn tham gia đã bị giải tán!');
+        // Xóa CLB khỏi danh sách local
         const disbandIdx = groups.findIndex(g => g.name === newest.clubName);
         if (disbandIdx !== -1) {
           groups.splice(disbandIdx, 1);
           lsSet(LS_GROUPS + '_' + currentUser.name, groups);
           renderGroups();
         }
+        // Xóa notif này
         const sSelf = currentUser.name.replace(/[.#$[\]/]/g,'_');
         window.FB.remove('vancanh/notifications/' + sSelf + '/' + newest.key);
+        // Nếu đang ở trang chi tiết CLB bị giải tán → về trang groups
         if (currentPage === 'club-detail' && currentClubIdx !== null) {
           const cg = groups[currentClubIdx];
           if (!cg || cg.name === newest.clubName) showPage('groups');
@@ -6374,33 +7020,49 @@ listenNotifications = function() {
   });
 };
 
+// Override renderPosts to award XP on post creation
+const _origCreatePost = typeof createPost !== 'undefined' ? createPost : null;
+
 window.addEventListener('DOMContentLoaded', () => {
+  // Initialize calendar to current date
   calYear = new Date().getFullYear();
   calMonth = new Date().getMonth();
 
+  // ✅ EMERGENCY ESCAPE — đóng tất cả overlay/modal khi bị kẹt
   function closeAllOverlays() {
+    // Đóng tất cả modal-overlay
     document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
+    // Đóng verify/forgot modal
     ['forgot-modal','verify-modal'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.remove('open');
     });
+    // Đóng news detail
     const nd = document.getElementById('news-detail-overlay');
     if (nd) nd.classList.remove('open');
+    // Đóng lightbox
     const lb = document.getElementById('gallery-lightbox');
     if (lb) lb.classList.remove('open');
+    // Đóng call overlay
     closeCallUI();
+    // Đóng Jitsi overlay
     closeJitsiOverlay();
+    // Đóng group call banner
     const gcb = document.getElementById('group-call-banner');
     if (gcb) gcb.remove();
+    // Đóng context menu
     closeCtxMenu();
+    // Đóng sidebar overlay (mobile)
     const so = document.getElementById('sidebar-overlay');
     if (so) so.classList.remove('active');
   }
 
+  // Phím Escape đóng tất cả
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeAllOverlays();
   });
 
+  // ✅ Nút Emergency Escape — hiện khi phát hiện overlay đang chặn UI
   const escBtn = document.createElement('button');
   escBtn.id = 'emergency-escape-btn';
   escBtn.title = 'Đóng tất cả popup (Emergency Escape)';
@@ -6418,6 +7080,7 @@ window.addEventListener('DOMContentLoaded', () => {
   escBtn.addEventListener('click', () => { closeAllOverlays(); escBtn.style.display = 'none'; });
   document.body.appendChild(escBtn);
 
+  // Kiểm tra mỗi 800ms — nếu có overlay đang mở thì hiện nút
   setInterval(() => {
     const hasOpen =
       document.querySelector('.modal-overlay.open') ||
@@ -6429,17 +7092,21 @@ window.addEventListener('DOMContentLoaded', () => {
     escBtn.style.display = hasOpen ? 'flex' : 'none';
   }, 800);
 
+  // ✅ TỰ ĐỘNG ĐĂNG NHẬP lại nếu có session đã lưu (tránh mất dữ liệu khi F5 hoặc đóng/mở tab)
   const savedSession = lsGet('vc_session', null);
   if (savedSession && savedSession.name) {
+    // Kiểm tra user có tồn tại không trước khi restore
     const users = getUsers();
     const found = users.find(u => u.name === savedSession.name);
     if (found) {
+      // Bỏ qua màn hình đăng nhập, vào thẳng app
       loginUser(savedSession.name);
     } else {
-      lsSet('vc_session', null);
+      lsSet('vc_session', null); // Xóa session cũ nếu user không còn tồn tại
     }
   }
 
+  // Load tin tức động từ Firebase/localStorage
   if (window.FB && window.FB.ready) {
     window.FB.get('vancanh/news_events').then(val => {
       if (val) _newsData_dynamic = Object.values(val).sort((a,b) => b.id - a.id);
@@ -6448,14 +7115,14 @@ window.addEventListener('DOMContentLoaded', () => {
     _newsData_dynamic = lsGet('vc_news_events', []);
   }
 
+  // Add lightbox HTML if not present
   if (!document.getElementById('gallery-lightbox')) {
     const lb = document.createElement('div');
     lb.id = 'gallery-lightbox';
     lb.className = 'gallery-lightbox';
     lb.innerHTML = `
       <button onclick="closeLightbox()" style="position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:24px;width:44px;height:44px;border-radius:50%;cursor:pointer;z-index:10;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">✕</button>
-      <div id="lb-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px"></div>
-      <div id="lb-caption" style="font-size:15px;color:rgba(255,255,255,0.8);font-weight:500;text-align:center;max-width:80vw;padding:0 16px;line-height:1.5;"></div>
+      <div id="lb-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px"></div>      <div id="lb-caption" style="font-size:15px;color:rgba(255,255,255,0.8);font-weight:500;text-align:center;max-width:80vw;padding:0 16px;line-height:1.5;"></div>
       <button id="lb-delete-btn" style="display:none;align-items:center;gap:6px;padding:9px 18px;background:rgba(239,68,68,0.85);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.2s" onmouseover="this.style.background='rgba(239,68,68,1)'" onmouseout="this.style.background='rgba(239,68,68,0.85)'" onclick="deleteLightboxPhoto()">🗑️ Xóa ảnh</button>
     `;
     document.body.appendChild(lb);
